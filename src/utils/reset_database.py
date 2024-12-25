@@ -1,11 +1,12 @@
 import os
 import dotenv
+import logging
 
 from log_decorator import log
 from singleton import Singleton
 from src.dao.db_connection import DBConnection
 from src.client.dares_client import DaresClient
-from src.service.dares_service import DaresService
+from src.service.publication_service import PublicationService
 
 
 class ResetDatabase(metaclass=Singleton):
@@ -54,10 +55,12 @@ class ResetDatabase(metaclass=Singleton):
         """
 
         publications_dares = DaresClient().get_all_dares()
-        for publi in publi_dares:
-            DaresService().creer(publi)
-        print("La table 'dares' a bien été remplie.")
+        publications = publications_dares
+        for publi in publications:
+            PublicationService().creer(publi)
+        print("La table 'publication' a bien été remplie.")
 
 
 if __name__ == "__main__":
     ResetDatabase().lancer()
+    ResetDatabase().remplir()

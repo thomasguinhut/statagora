@@ -109,11 +109,11 @@ class DaresClient:
                 # Filtrer les articles vides
                 if title or date or link or subtitle or collection:
                     article_data.append({
-                        'title': title,
+                        'titre': title,
                         'date': date_formatee,
-                        'link': f"https://dares.travail-emploi.gouv.fr{link}" if link else None,
+                        'lien': f"https://dares.travail-emploi.gouv.fr{link}" if link else None,
                         'organisme': "dares",
-                        'subtitle': subtitle,
+                        'soustitre': subtitle,
                         'collection': collection  # Ajout de la collection au dictionnaire
                     })
 
@@ -129,5 +129,4 @@ class DaresClient:
 if __name__ == "__main__":
     client = DaresClient()
     results = client.get_all_dares()
-    for article in results:
-        print(article['title'])
+    print(results)
