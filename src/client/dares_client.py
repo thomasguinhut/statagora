@@ -122,6 +122,9 @@ class DaresClient:
 
         return article_data
 
+    def get_last_dares(self, date) -> List[dict]:
+        pass
+
 
 if __name__ == "__main__":
     client = DaresClient()
