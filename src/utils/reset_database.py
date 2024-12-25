@@ -1,10 +1,11 @@
 import os
 import dotenv
 
+from log_decorator import log
 from singleton import Singleton
-from dao.db_connection import DBConnection
-from client.dares import DaresClient
-from service.dares import DaresService
+from src.dao.db_connection import DBConnection
+from src.client.dares_client import DaresClient
+from src.service.dares_service import DaresService
 
 
 class ResetDatabase(metaclass=Singleton):
@@ -60,4 +61,3 @@ class ResetDatabase(metaclass=Singleton):
 
 if __name__ == "__main__":
     ResetDatabase().lancer()
-    ResetDatabase().remplir()
