@@ -14,7 +14,7 @@ class DaresClient:
         page_number = 0  # Numéro de la page à parcourir
         empty_pages = 0  # Compteur de pages vides consécutives
 
-        while True:
+        for i in range(2):
             url = f"https://dares.travail-emploi.gouv.fr/publications?page={
                 page_number}"
 
@@ -121,3 +121,10 @@ class DaresClient:
             page_number += 1
 
         return article_data
+
+
+if __name__ == "__main__":
+    client = DaresClient()
+    results = client.get_all_dares()
+    for article in results:
+        print(article['title'])
