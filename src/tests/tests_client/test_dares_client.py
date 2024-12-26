@@ -1,4 +1,4 @@
-from src.client.dares_client import DaresClient
+from client.dares_client import DaresClient
 
 
 def test_get_all_dares_ok():

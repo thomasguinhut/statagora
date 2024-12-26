@@ -4,9 +4,9 @@ import logging
 
 from log_decorator import log
 from singleton import Singleton
-from src.dao.db_connection import DBConnection
-from src.client.dares_client import DaresClient
-from src.service.publication_service import PublicationService
+from dao.db_connection import DBConnection
+from client.dares_client import DaresClient
+from service.publication_service import PublicationService
 
 
 class ResetDatabase(metaclass=Singleton):
@@ -33,8 +33,11 @@ class ResetDatabase(metaclass=Singleton):
 
         dotenv.load_dotenv()
         schema = os.environ["POSTGRES_SCHEMA"]
-        create_schema = f"DROP SCHEMA IF EXISTS {
-            schema} CASCADE;" f"CREATE SCHEMA {schema};"
+        create_schema = (
+            f"DROP SCHEMA IF EXISTS {
+            schema} CASCADE;"
+            f"CREATE SCHEMA {schema};"
+        )
         with open("data/init_db.sql", encoding="utf-8") as init_db:
             init_db_as_string = init_db.read()
         try:
@@ -54,7 +57,7 @@ class ResetDatabase(metaclass=Singleton):
 
         """
 
-        publications_dares = DaresClient().get_all_dares()
+        publications_dares = DaresClient().get_all_dares(True)
         publications = publications_dares
         for publi in publications:
             PublicationService().creer(publi)

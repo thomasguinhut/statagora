@@ -3,7 +3,7 @@ import logging
 from utils.singleton import Singleton
 from utils.log_decorator import log
 
-from src.dao.db_connection import DBConnection
+from dao.db_connection import DBConnection
 
 
 class PublicationDao:
@@ -26,13 +26,13 @@ class PublicationDao:
                             RETURNING titre_publication;
                         """,
                         {
-                            "id": publication.id,
-                            "titre": publication.titre,
-                            "date": publication.date,
-                            "lien": publication.lien,
-                            "organisme": publication.organisme,
-                            "soustitre": publication.soustitre,
-                            "collection": publication.collection,
+                            "id_publication": publication.id,
+                            "titre_publication": publication.titre,
+                            "date_publication": publication.date,
+                            "lien_publication": publication.lien,
+                            "organisme_publication": publication.organisme,
+                            "soustitre_publication": publication.soustitre,
+                            "collection_publication": publication.collection,
                         },
                     )
                     res = cursor.fetchone()

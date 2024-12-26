@@ -1,6 +1,7 @@
-from src.business_objet.publication import Publication
+from business_objet.publication import Publication
+from dao.publication_dao import PublicationDao
 
-from src.utils.log_decorator import log
+from utils.log_decorator import log
 
 
 class PublicationService:
@@ -9,12 +10,15 @@ class PublicationService:
     def creer(self, publication: dict[str, str]) -> Publication:
 
         nouvelle_publication = Publication(
-            titre=publication['titre'],
-            date=publication['date'],
-            lien=publication['lien'],
-            organisme=publication['organisme'],
-            soustitre=publication['soustitre'],
-            collection=publication['collection'],
+            titre=publication["titre"],
+            date=publication["date"],
+            lien=publication["lien"],
+            organisme=publication["organisme"],
+            soustitre=publication["soustitre"],
+            collection=publication["collection"],
         )
 
-        return nouvelle_publication
+        if PublicationDao().creer(nouvelle_publication):
+            return nouvelle_publication
+        else:
+            return None

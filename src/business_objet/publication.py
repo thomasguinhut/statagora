@@ -25,27 +25,27 @@ class Publication:
         self.organisme = organisme
         self.soustitre = soustitre
         self.collection = collection
-        self.id = self.construire_id(self.organisme, self.collection, self.date)
+        self.id = self.construire_id(self.titre, self.organisme, self.collection, self.date)
 
-    def construire_id(self, organisme, collection, date):
+    def construire_id(self, titre, organisme, collection, date):
         """Construire un identifiant unique à partir de la collection et de la date."""
 
-        # Mettre la collection en minuscules
+        # Partie collection
         collection_modifiee = collection.lower()
-
-        # Extraire tous les mots ayant plus de 4 lettres
         mots_collection_filtres = [mot for mot in collection_modifiee.split() if len(mot) > 4]
-
-        # Mettre l'orgnaisme en minuscules
-        organisme_modifie = organisme.lower()
-
-        # Extraire tous les mots ayant plus de 4 lettres
-        mots_organisme_filtres = [mot for mot in organisme_modifie.split()]
 
         # Ajouter les chiffres s'il y en a dans la collection
         chiffres = re.findall(r"\d+", collection)
         if chiffres:
             mots_collection_filtres += chiffres  # Ajouter les chiffres à la liste des mots filtrés
+
+        # Partie organisme
+        organisme_modifie = organisme.lower()
+        mots_organisme_filtres = [mot for mot in organisme_modifie.split()]
+
+        # Partie titre
+        titre_modifie = titre.lower()
+        mots_titre_filtres = [mot[0] for mot in titre_modifie.split() if len(mot) > 4]
 
         # Construire l'ID en concatenant la date et les mots filtrés de la collection
         id_construit = (
@@ -54,6 +54,20 @@ class Publication:
             + date.replace("-", "")
             + "_"
             + "_".join(mots_collection_filtres)
+            + "_"
+            + "".join(mots_titre_filtres)
         )
 
         return id_construit
+
+
+if __name__ == "__main__":
+    publication = Publication(
+        "Le titre de l'article",
+        "2021-01-01",
+        "http://example.com",
+        "Dares",
+        "Sous-titre de l'article",
+        "Dares Focus N° 58",
+    )
+    print(publication.id)

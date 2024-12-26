@@ -1,5 +1,5 @@
 import unittest
-from src.business_objet.publication import Publication
+from business_objet.publication import Publication
 
 
 class TestPublication(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestPublication(unittest.TestCase):
             "Dares Focus N° 58",
         )
         # Test si l'ID généré est correct
-        self.assertEqual(publication.id, "dares_20210101_dares_focus_58")
+        self.assertEqual(publication.id, "dares_20210101_dares_focus_58_tl")
 
     def test_titre_non_string(self):
         with self.assertRaises(TypeError) as context:

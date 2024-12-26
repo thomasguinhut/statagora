@@ -115,3 +115,9 @@ class DaresClient:
 
     def get_last_dares(self, date) -> List[dict]:
         pass
+
+
+if __name__ == "__main__":
+    publications = DaresClient().get_all_dares(test=True)
+    for i in publications:
+        print(i["date"] + " - " + i["collection"])
