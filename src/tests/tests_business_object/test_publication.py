@@ -4,18 +4,6 @@ from business_objet.publication import Publication
 
 class TestPublication(unittest.TestCase):
 
-    def test_publication(self):
-        publication = Publication(
-            "Le titre de l'article",
-            "2021-01-01",
-            "http://example.com",
-            "Dares",
-            "Sous-titre de l'article",
-            "Dares Focus N° 58",
-        )
-        # Test si l'ID généré est correct
-        self.assertEqual(publication.id, "dares_20210101_dares_focus_58_tl")
-
     def test_titre_non_string(self):
         with self.assertRaises(TypeError) as context:
             publication = Publication(

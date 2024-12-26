@@ -16,17 +16,16 @@ class PublicationDao:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         """
-                        INSERT INTO publication(id_publication, titre_publication,
+                        INSERT INTO publication(titre_publication,
                                                 date_publication, lien_publication,
                                                 organisme_publication, soustitre_publication,
                                                 collection_publication) VALUES
-                        (%(id_publication)s, %(titre_publication)s, %(date_publication)s,
+                        (%(titre_publication)s, %(date_publication)s,
                         %(lien_publication)s, %(organisme_publication)s,
                         %(soustitre_publication)s, %(collection_publication)s)
                             RETURNING titre_publication;
                         """,
                         {
-                            "id_publication": publication.id,
                             "titre_publication": publication.titre,
                             "date_publication": publication.date,
                             "lien_publication": publication.lien,

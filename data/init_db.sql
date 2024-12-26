@@ -1,19 +1,18 @@
 -----------------------------------------------------
 -- Organisme
 -----------------------------------------------------
-DROP TABLE IF EXISTS organisme CASCADE ;
+DROP TABLE IF EXISTS organisme CASCADE;
 CREATE TABLE organisme(
-    id_organisme   VARCHAR PRIMARY KEY,
-    nom_organisme VARCHAR NOT NULL UNIQUE
+    nom_organisme VARCHAR PRIMARY KEY,
+    logo BYTEA
 );
 
 -----------------------------------------------------
 -- Publication
 -----------------------------------------------------
-DROP TABLE IF EXISTS publication CASCADE ;
+DROP TABLE IF EXISTS publication CASCADE;
 CREATE TABLE publication(
-    id_publication VARCHAR PRIMARY KEY,
-    titre_publication VARCHAR NOT NULL,
+    titre_publication VARCHAR PRIMARY KEY,
     date_publication VARCHAR NOT NULL,
     lien_publication VARCHAR NOT NULL,
     organisme_publication VARCHAR NOT NULL,
@@ -22,5 +21,6 @@ CREATE TABLE publication(
     FOREIGN KEY (organisme_publication) REFERENCES organisme(nom_organisme)
 );
 
-INSERT INTO organisme (id_organisme, nom_organisme) VALUES
-('1', 'dares')
+-- Exemple d'insertion d'un organisme
+INSERT INTO organisme (nom_organisme) VALUES
+('dares')
