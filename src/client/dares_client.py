@@ -9,12 +9,12 @@ class DaresClient:
     def __init__(self) -> None:
         pass
 
-    def get_all_dares(self) -> List[dict]:
+    def get_all_dares(self, test) -> List[dict]:
         article_data = []
-        page_number = 0  # Numéro de la page à parcourir
-        empty_pages = 0  # Compteur de pages vides consécutives
+        page_number = 0
+        empty_pages = 0
 
-        for i in range(2):
+        while True:
             url = f"https://dares.travail-emploi.gouv.fr/publications?page={
                 page_number}"
 
@@ -120,6 +120,9 @@ class DaresClient:
             # Passer à la page suivante
             page_number += 1
 
+            if (test is True) and (page_number == 4):
+                return article_data
+
         return article_data
 
     def get_last_dares(self, date) -> List[dict]:
@@ -127,6 +130,5 @@ class DaresClient:
 
 
 if __name__ == "__main__":
-    client = DaresClient()
-    results = client.get_all_dares()
+    results = DaresClient().get_all_dares(True)
     print(results)

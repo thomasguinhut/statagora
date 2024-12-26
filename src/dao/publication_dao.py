@@ -23,12 +23,12 @@ class PublicationDao:
                             RETURNING titre_publication;
                         """,
                         {
-                            "titre_publication": publication.titre_publication,
-                            "date_publication": publication.date_publication,
-                            "lien_publication": publication.lien_publication,
-                            "organisme_publication": publication.organisme_publication,
-                            "soustitre_publication": publication.soustitre_publication,
-                            "collection_publication": publication.collection_publication
+                            "titre": publication.titre,
+                            "date": publication.date,
+                            "lien": publication.lien,
+                            "organisme": publication.organisme,
+                            "soustitre": publication.soustitre,
+                            "collection": publication.collection,
                         },
                     )
                     res = cursor.fetchone()
