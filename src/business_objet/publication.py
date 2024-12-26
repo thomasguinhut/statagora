@@ -25,9 +25,7 @@ class Publication:
         self.organisme = organisme
         self.soustitre = soustitre
         self.collection = collection
-        self.id = self.construire_id(
-            self.organisme, self.collection, self.date
-        )  # Appel correct de la méthode
+        self.id = self.construire_id(self.organisme, self.collection, self.date)
 
     def construire_id(self, organisme, collection, date):
         """Construire un identifiant unique à partir de la collection et de la date."""
