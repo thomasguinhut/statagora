@@ -1,4 +1,6 @@
 import re
+from datetime import datetime
+import locale
 
 
 class Publication:
@@ -25,3 +27,40 @@ class Publication:
         self.organisme = organisme
         self.soustitre = soustitre
         self.collection = collection
+
+    def get_month_year_and_week(self):
+        # Définir la locale en français pour afficher les mois en français
+        try:
+            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")  # Réglage de la locale sur le français
+        except locale.Error:
+            print(
+                "La locale 'fr_FR.UTF-8' n'est pas disponible. Assurez-vous qu'elle est installée sur votre système."
+            )
+            return None, None
+
+        # Convertir la chaîne de caractères en objet datetime avec le bon format
+        try:
+            date = datetime.strptime(self.date, "%d/%m/%Y")  # Format correct pour DD/MM/YYYY
+        except ValueError as e:
+            print(f"Erreur de format de date pour {self.date}: {e}")
+            return None, None
+
+        month_year = date.strftime(
+            "%B %Y"
+        ).capitalize()  # Mettre en majuscule la première lettre du mois
+        week_number = date.strftime(
+            "%V"
+        )  # Numéro de semaine ISO (lundi comme premier jour de la semaine)
+        return month_year, int(week_number)
+
+
+if __name__ == "__main__":
+    publication = Publication(
+        titre="Titre",
+        date="23/12/2024",
+        lien="lien",
+        organisme="organisme",
+        soustitre="soustitre",
+        collection="123",
+    )
+    print(publication.get_month_year_and_week())

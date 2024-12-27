@@ -22,3 +22,23 @@ class PublicationService:
             return nouvelle_publication
         else:
             return None
+
+    def tout_afficher(self):
+        df = PublicationDao().tout_afficher()
+        liste = []
+        for row in df.itertuples():
+            publi = Publication(
+                titre=row.titre_publication,
+                date=row.date_publication,
+                lien=row.lien_publication,
+                organisme=row.organisme_publication,
+                soustitre=row.soustitre_publication,
+                collection=row.collection_publication,
+            )
+            liste.append(publi)
+        return liste
+
+
+if __name__ == "__main__":
+    publication_service = PublicationService()
+    print(publication_service.tout_afficher())

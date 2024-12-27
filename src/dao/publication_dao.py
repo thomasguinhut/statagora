@@ -1,4 +1,6 @@
 import logging
+import streamlit as st
+
 
 from utils.singleton import Singleton
 from utils.log_decorator import log
@@ -42,3 +44,23 @@ class PublicationDao:
         if res:
             created = True
         return created
+
+    def tout_afficher(self):
+        # Connexion à la base de données PostgreSQL
+        conn = st.connection("postgresql", type="sql")
+
+        # Requête SQL pour récupérer les publications et les logos
+        query = """
+        SELECT *
+        FROM 
+            statagora.publication;
+        """
+
+        # Exécution de la requête sans cache
+        df = conn.query(query)
+
+        return df
+
+
+if __name__ == "__main__":
+    print(PublicationDao().tout_afficher())
