@@ -21,6 +21,9 @@ class Publication:
         if not isinstance(collection, str):
             raise TypeError("collection doit être un str")
 
+        collection = re.sub(r"([Nn])\s*°", r"\1°", collection)  # Cas 1
+        collection = re.sub(r"([Nn]°)\s+(\d+)", r"\1\2", collection)  # Cas 2
+
         self.titre = titre
         self.date = date
         self.lien = lien
