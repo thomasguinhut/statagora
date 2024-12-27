@@ -11,7 +11,7 @@ class PublicationService:
 
         nouvelle_publication = Publication(
             titre=publication["titre"],
-            date=publication["date"],
+            date_str=publication["date"],
             lien=publication["lien"],
             organisme=publication["organisme"],
             soustitre=publication["soustitre"],
@@ -29,7 +29,7 @@ class PublicationService:
         for row in df.itertuples():
             publi = Publication(
                 titre=row.titre_publication,
-                date=row.date_publication,
+                date_str=row.date_publication,
                 lien=row.lien_publication,
                 organisme=row.organisme_publication,
                 soustitre=row.soustitre_publication,
@@ -37,6 +37,9 @@ class PublicationService:
             )
             liste.append(publi)
         return liste
+
+    def nom_explicite_organisme(self, id_organisme):
+        return PublicationDao().nom_explicite_organisme(id_organisme)
 
 
 if __name__ == "__main__":

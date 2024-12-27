@@ -51,23 +51,35 @@ class PublicationDao:
         # Requête SQL pour récupérer les publications et les logos
         query = """
         SELECT *
-        FROM 
-            statagora.publication;
+            FROM statagora.publication p
+            LEFT JOIN statagora.organisme o ON p.organisme_publication = o.nom_organisme
         """
         # Exécution de la requête sans cache
         df = conn.query(query)
         return df
 
-    def afficher_date_de_la_publi_la_plus_récente(self, organisme):
+    def afficher_date_la_plus_récente(self, organisme):
         conn = st.connection("postgresql", type="sql")
-        query = """
+        query = f"""
         SELECT MAX(date_publication) AS date_la_plus_récente
         FROM statagora.publication
-        WHERE organisme_publication = %s
+        WHERE organisme_publication = '{organisme}'
         """
-        df = conn.query(query, (organisme,))
+        df = conn.query(query)
         return df.iloc[0]["date_la_plus_récente"] if not df.empty else None
+
+    def nom_explicite_organisme(self, id_organisme):
+        conn = st.connection("postgresql", type="sql")
+        query = f"""
+        SELECT nom_explicite_organisme 
+        FROM statagora.organisme
+        WHERE nom_organisme = '{id_organisme}'
+        """
+        df = conn.query(query)
+        return df.iloc[0]["nom_explicite_organisme"] if not df.empty else None
 
 
 if __name__ == "__main__":
-    print(PublicationDao().tout_afficher())
+    dao = PublicationDao()
+    print(dao.afficher_date_la_plus_récente("dares"))
+    print(dao.nom_explicite_organisme("dares"))

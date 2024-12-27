@@ -2,7 +2,7 @@ import locale
 import requests
 from bs4 import BeautifulSoup
 from typing import List
-from datetime import datetime
+from datetime import datetime, date
 
 
 class DaresClient:
@@ -87,7 +87,7 @@ class DaresClient:
                 # Convertir et formater la date
                 try:
                     if date:
-                        date_objet = datetime.strptime(date, "%d %B %Y")
+                        date_objet = datetime.strptime(date, "%d %B %Y").date()
                         date_formatee = date_objet.strftime("%d/%m/%Y")
                 except ValueError:
                     date_formatee = "Erreur de conversion de la date"

@@ -1,17 +1,21 @@
 import re
-from datetime import datetime
+from datetime import datetime, date
 import locale
 
 
 class Publication:
 
     def __init__(
-        self, titre: str, date: str, lien: str, organisme: str, soustitre: str, collection: str
+        self, titre: str, date_str: str, lien: str, organisme: str, soustitre: str, collection: str
     ):
+        if isinstance(date_str, str) and date_str[2] == "/":
+            date_obj = datetime.strptime(date_str, "%d/%m/%Y").date()
+        else:  # c'est déjà un obj
+            date_obj = date_str
         if not isinstance(titre, str):
             raise TypeError("titre doit être un str")
-        if not isinstance(date, str):
-            raise TypeError("date doit être un str")
+        if not isinstance(date_obj, date):
+            raise TypeError("date doit être une instance de datetime.date")
         if not isinstance(lien, str):
             raise TypeError("lien doit être un str")
         if not isinstance(organisme, str):
@@ -25,7 +29,7 @@ class Publication:
         collection = re.sub(r"([Nn]°)\s+(\d+)", r"\1\2", collection)  # Cas 2
 
         self.titre = titre
-        self.date = date
+        self.date = date_obj
         self.lien = lien
         self.organisme = organisme
         self.soustitre = soustitre
@@ -41,17 +45,10 @@ class Publication:
             )
             return None, None
 
-        # Convertir la chaîne de caractères en objet datetime avec le bon format
-        try:
-            date = datetime.strptime(self.date, "%d/%m/%Y")  # Format correct pour DD/MM/YYYY
-        except ValueError as e:
-            print(f"Erreur de format de date pour {self.date}: {e}")
-            return None, None
-
-        month_year = date.strftime(
+        month_year = self.date.strftime(
             "%B %Y"
         ).capitalize()  # Mettre en majuscule la première lettre du mois
-        week_number = date.strftime(
+        week_number = self.date.strftime(
             "%V"
         )  # Numéro de semaine ISO (lundi comme premier jour de la semaine)
         return month_year, int(week_number)
@@ -60,7 +57,7 @@ class Publication:
 if __name__ == "__main__":
     publication = Publication(
         titre="Titre",
-        date="23/12/2024",
+        date_str="31/12/2024",
         lien="lien",
         organisme="organisme",
         soustitre="soustitre",

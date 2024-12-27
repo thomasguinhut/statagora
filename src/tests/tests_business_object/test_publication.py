@@ -8,7 +8,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre=123,
-                date="2024-12-26",
+                date_str="2024-12-26",
                 lien="lien",
                 organisme="organisme",
                 soustitre="soustitre",
@@ -20,7 +20,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre="Titre",
-                date=123,
+                date_str=123,
                 lien="lien",
                 organisme="organisme",
                 soustitre="soustitre",
@@ -32,7 +32,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre="Titre",
-                date="2024-12-26",
+                date_str="2024-12-26",
                 lien=123,
                 organisme="organisme",
                 soustitre="soustitre",
@@ -44,7 +44,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre="Titre",
-                date="2024-12-26",
+                date_str="2024-12-26",
                 lien="lien",
                 organisme=123,
                 soustitre="soustitre",
@@ -56,7 +56,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre="Titre",
-                date="2024-12-26",
+                date_str="2024-12-26",
                 lien="lien",
                 organisme="organisme",
                 soustitre=123,
@@ -68,7 +68,7 @@ class TestPublication(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             publication = Publication(
                 titre="Titre",
-                date="2024-12-26",
+                date_str="2024-12-26",
                 lien="lien",
                 organisme="organisme",
                 soustitre="soustitre",

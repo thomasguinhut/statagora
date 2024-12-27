@@ -18,11 +18,12 @@ if publications:
         if month_year and week and (month_year != previous_month_year or week != previous_week):
             st.markdown("<hr style='border: 2px solid white;'>", unsafe_allow_html=True)
             st.subheader(f"{month_year} - S{week}")
+            st.write("")
             previous_month_year = month_year
             previous_week = week
 
         st.markdown(
-            f"- {row.organisme.upper()} - {row.date} - *{row.collection}*  \n"
+            f"- {PublicationService().nom_explicite_organisme(row.organisme)} - {row.date} - *{row.collection}*  \n"
             f"**[{row.titre}]({row.lien})**",
             unsafe_allow_html=True,
         )
