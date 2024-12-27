@@ -48,18 +48,25 @@ class PublicationDao:
     def tout_afficher(self):
         # Connexion à la base de données PostgreSQL
         conn = st.connection("postgresql", type="sql")
-
         # Requête SQL pour récupérer les publications et les logos
         query = """
         SELECT *
         FROM 
             statagora.publication;
         """
-
         # Exécution de la requête sans cache
         df = conn.query(query)
-
         return df
+
+    def afficher_date_de_la_publi_la_plus_récente(self, organisme):
+        conn = st.connection("postgresql", type="sql")
+        query = """
+        SELECT MAX(date_publication) AS date_la_plus_récente
+        FROM statagora.publication
+        WHERE organisme_publication = %s
+        """
+        df = conn.query(query, (organisme,))
+        return df.iloc[0]["date_la_plus_récente"] if not df.empty else None
 
 
 if __name__ == "__main__":
