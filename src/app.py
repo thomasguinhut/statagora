@@ -1,6 +1,8 @@
 import streamlit as st
 from service.publication_service import PublicationService
 import os
+from datetime import datetime, date
+
 
 st.title("Statagora")
 
@@ -23,8 +25,8 @@ if publications:
             previous_week = week
 
         st.markdown(
-            f"- {PublicationService().nom_explicite_organisme(row.organisme)} - {row.date} - *{row.collection}*  \n"
-            f"**[{row.titre}]({row.lien})**",
+            f"""<span style="color: white;">- <strong><a href="{row.lien}" style="color: white;">{row.titre}</a></strong></span>  \n
+            f"""{PublicationService().nom_explicite_organisme(row.organisme)} - {row.date.strftime("%d/%m/%Y")} - *{row.collection}*""",
             unsafe_allow_html=True,
         )
         if row.soustitre:
