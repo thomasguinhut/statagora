@@ -81,5 +81,4 @@ class PublicationDao:
 
 if __name__ == "__main__":
     dao = PublicationDao()
-    print(dao.afficher_date_la_plus_récente("dares"))
     print(dao.nom_explicite_organisme("dares"))

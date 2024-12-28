@@ -4,7 +4,7 @@ import os
 from datetime import datetime, date
 
 
-st.title("Statagora")
+st.title("📊 Statagora")
 
 # Initialiser les variables
 previous_month_year = ""
@@ -19,14 +19,14 @@ if publications:
         # Afficher le titre si le mois/année ou la semaine a changé
         if month_year and week and (month_year != previous_month_year or week != previous_week):
             st.markdown("<hr style='border: 2px solid white;'>", unsafe_allow_html=True)
-            st.subheader(f"{month_year} - S{week}")
+            st.subheader(f"📆 {month_year} - S{week}")
             st.write("")
             previous_month_year = month_year
             previous_week = week
 
         st.markdown(
-            f"""<span style="color: white;">- <strong><a href="{row.lien}" style="color: white;">{row.titre}</a></strong></span>  \n
-            f"""{PublicationService().nom_explicite_organisme(row.organisme)} - {row.date.strftime("%d/%m/%Y")} - *{row.collection}*""",
+            f"- <strong><a href='{row.lien}' style='color: white;'>{row.titre}</a></strong>  \n"
+            f"<span style='opacity: 0.7;'>{PublicationService().nom_explicite_organisme(row.organisme)} - {row.date.strftime('%d/%m/%Y')} - <em>{row.collection}</em></span>",
             unsafe_allow_html=True,
         )
         if row.soustitre:

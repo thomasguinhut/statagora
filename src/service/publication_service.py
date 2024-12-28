@@ -38,10 +38,13 @@ class PublicationService:
             liste.append(publi)
         return liste
 
+    def afficher_date_la_plus_récente(self, organisme):
+        return PublicationDao().afficher_date_la_plus_récente(organisme)
+
     def nom_explicite_organisme(self, id_organisme):
         return PublicationDao().nom_explicite_organisme(id_organisme)
 
 
 if __name__ == "__main__":
     publication_service = PublicationService()
-    print(publication_service.tout_afficher())
+    print(publication_service.afficher_date_la_plus_récente("dares"))
