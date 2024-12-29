@@ -4,7 +4,7 @@ import subprocess
 def run_streamlit_app():
     try:
         # Exécuter Streamlit sans bloquer le script Python
-        subprocess.Popen(["streamlit", "run", "src/app.py"])
+        subprocess.Popen(["streamlit", "run", "streamlit/app.py"])
         print("Streamlit est en cours d'exécution.")
     except KeyboardInterrupt:
         print("L'exécution de Streamlit a été interrompue.")
