@@ -1,6 +1,6 @@
 import streamlit as st
-from src.service.publication_service import PublicationService
-from datetime import datetime, timedelta
+from service.publication_service import PublicationService
+from datetime import datetime
 
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
