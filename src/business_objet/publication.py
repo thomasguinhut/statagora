@@ -66,24 +66,17 @@ class Publication:
             )
 
     def get_month_year_and_week(self):
-        """
+        try:
+            # Définir la locale en français pour afficher les mois en français
+            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+        except locale.Error:
+            # Si la locale n'est pas supportée, utiliser la locale par défaut
+            locale.setlocale(locale.LC_TIME, "C")
 
-        Retourne le mois et l'année de la publication ainsi que le numéro de semaine
-
-        Returns:
-            liste: mois et année de la publication en str, numéro de semaine en int
-        """
-
-        # Définir la locale en français pour afficher les mois en français
-        locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")  # Réglage de la locale sur le français
         date = datetime.strptime(self.date_publication, "%Y-%m-%d").date()
-        month_year = date.strftime(
-            "%B %Y"
-        ).capitalize()  # Mettre en majuscule la première lettre du mois
-        week_number = date.strftime(
-            "%V"
-        )  # Numéro de semaine ISO (lundi comme premier jour de la semaine)
-        return month_year, int(week_number)
+        month_year = date.strftime("%B %Y")
+        week = date.isocalendar()[1]
+        return month_year, week
 
     def nom_officiel(self, id_organisme: str) -> str:
         if id_organisme == "dares":

@@ -9,7 +9,7 @@ def run_streamlit_app():
         sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
         # Exécuter Streamlit sans bloquer le script Python
-        subprocess.Popen(["streamlit", "run", "streamlit/app.py"])
+        subprocess.Popen(["streamlit", "run", "app.py"])
         print("Streamlit est en cours d'exécution.")
     except KeyboardInterrupt:
         print("L'exécution de Streamlit a été interrompue.")
