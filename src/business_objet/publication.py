@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, date
+from babel.dates import format_date
 import locale
 
 
@@ -66,11 +67,9 @@ class Publication:
             )
 
     def get_month_year_and_week(self):
-        # Définir la locale sur français
-        locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
-        now = datetime.now()
-        month_year = now.strftime("%B %Y")
-        week_number = now.strftime("%U")
+        date = datetime.strptime(self.date_publication, "%Y-%m-%d").date()
+        month_year = format_date(date, "MMMM yyyy", locale="fr")
+        week_number = date.isocalendar()[1]
         return month_year.capitalize(), week_number
 
     def nom_officiel(self, id_organisme: str) -> str:
