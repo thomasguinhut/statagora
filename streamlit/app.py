@@ -1,6 +1,12 @@
+import sys
+import os
+
+# Ajouter le répertoire parent de src au PYTHONPATH
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 import streamlit as st
-from service.publication_service import PublicationService
-from datetime import datetime
+from src.service.publication_service import PublicationService
+from datetime import datetime, timedelta
 
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")

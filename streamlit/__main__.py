@@ -1,8 +1,13 @@
 import subprocess
+import sys
+import os
 
 
 def run_streamlit_app():
     try:
+        # Ajouter le répertoire src au PYTHONPATH
+        sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+
         # Exécuter Streamlit sans bloquer le script Python
         subprocess.Popen(["streamlit", "run", "streamlit/app.py"])
         print("Streamlit est en cours d'exécution.")
