@@ -99,4 +99,4 @@ if __name__ == "__main__":
         soustitre_publication="soustitre",
         collection_publication="collection",
     )
-    print(publication.nom_officiel_organisme)
+    print(publication.get_month_year_and_week())
