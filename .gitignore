@@ -1,5 +1,2 @@
-statagora.json
-*.png
-test.py
 .coverage
 secrets.toml

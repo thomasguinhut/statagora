@@ -76,7 +76,7 @@ class Publication:
         date = datetime.strptime(self.date_publication, "%Y-%m-%d").date()
         month_year = date.strftime("%B %Y")
         week = date.isocalendar()[1]
-        return month_year, week
+        return month_year.capitalize(), week
 
     def nom_officiel(self, id_organisme: str) -> str:
         if id_organisme == "dares":
