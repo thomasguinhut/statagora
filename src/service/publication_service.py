@@ -1,7 +1,7 @@
-from src.business_objet.publication import Publication
-from src.dao.publication_dao import PublicationDao
+from business_objet.publication import Publication
+from dao.publication_dao import PublicationDao
 
-from src.utils.log_decorator import log
+from utils.log_decorator import log
 from functools import lru_cache
 
 
@@ -34,10 +34,10 @@ class PublicationService:
             liste.append(publi)
         return liste
 
-    def afficher_date_la_plus_récente(self, organisme):
-        return PublicationDao().afficher_date_la_plus_récente(organisme)
+    def afficher_date_la_plus_récente(self, id_organisme):
+        return PublicationDao().afficher_date_la_plus_récente(id_organisme)
 
 
 if __name__ == "__main__":
     publication_service = PublicationService()
-    print(publication_service.nom_officiel_organisme("dares"))
+    print(publication_service.afficher_date_la_plus_récente("dares"))

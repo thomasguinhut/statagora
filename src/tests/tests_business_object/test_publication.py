@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from src.business_objet.publication import Publication
+from business_objet.publication import Publication
 from datetime import datetime, date
 
 

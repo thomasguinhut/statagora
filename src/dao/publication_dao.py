@@ -1,5 +1,5 @@
 import logging
-from src.dao.db_connection import DBConnection
+from dao.db_connection import DBConnection
 import pandas as pd
 
 
@@ -12,9 +12,9 @@ class PublicationDao:
         df = pd.DataFrame(records)
         return df
 
-    def afficher_date_la_plus_récente(self, organisme):
+    def afficher_date_la_plus_récente(self, id_organisme):
         df = self.afficher_publications()
-        df = df[df["id_organisme_publication"] == organisme]
+        df = df[df["id_organisme_publication"] == id_organisme]
         return df["date_publication"].max() if not df.empty else None
 
 
