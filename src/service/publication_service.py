@@ -1,7 +1,7 @@
-from business_objet.publication import Publication
-from dao.publication_dao import PublicationDao
+from src.business_objet.publication import Publication
+from src.dao.publication_dao import PublicationDao
 
-from utils.log_decorator import log
+from src.utils.log_decorator import log
 from functools import lru_cache
 
 
