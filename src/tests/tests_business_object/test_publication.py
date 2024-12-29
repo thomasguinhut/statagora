@@ -1,4 +1,6 @@
 import unittest
+import re
+
 from business_objet.publication import Publication
 from datetime import datetime, date
 
@@ -100,7 +102,20 @@ class TestPublication(unittest.TestCase):
             soustitre_publication="soustitre",
             collection_publication="collection",
         )
-        self.assertIsInstance(publication.date_publication, date)
+        self.assertIsInstance(publication.date_publication, str)
+
+    def test_date_publication_format(self):
+        publication = Publication(
+            titre_publication="Titre",
+            date_str_publication="26/12/2024",
+            lien_publication="lien",
+            id_organisme_publication="organisme",
+            soustitre_publication="soustitre",
+            collection_publication="collection",
+        )
+
+        # Vérifier que la date_publication est bien sous la forme XXXX-XX-XX
+        self.assertTrue(re.match(r"^\d{4}-\d{2}-\d{2}$", publication.date_publication))
 
     def test_get_month_year_and_week(self):
         publication = Publication(

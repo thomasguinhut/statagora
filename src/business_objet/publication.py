@@ -31,9 +31,10 @@ class Publication:
         )  # N° 123" deviendra "N°123
 
         self.titre_publication = titre_publication
-        self.date_publication = date_obj
+        self.date_publication = str(date_obj)
         self.lien_publication = lien_publication
         self.id_organisme_publication = id_organisme_publication
+        self.nom_officiel_organisme = self.nom_officiel(id_organisme_publication)
         self.soustitre_publication = soustitre_publication
         self.collection_publication = collection
 
@@ -75,10 +76,34 @@ class Publication:
 
         # Définir la locale en français pour afficher les mois en français
         locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")  # Réglage de la locale sur le français
-        month_year = self.date_publication.strftime(
+        date = datetime.strptime(self.date_publication, "%Y-%m-%d").date()
+        month_year = date.strftime(
             "%B %Y"
         ).capitalize()  # Mettre en majuscule la première lettre du mois
-        week_number = self.date_publication.strftime(
+        week_number = date.strftime(
             "%V"
         )  # Numéro de semaine ISO (lundi comme premier jour de la semaine)
         return month_year, int(week_number)
+
+    def nom_officiel(self, id_organisme: str) -> str:
+        if id_organisme == "dares":
+            return "Dares"
+        elif id_organisme == "insee":
+            return "Insee"
+        elif id_organisme == "ssmsi":
+            return "SSM-SI"
+
+    def nettoyer_titre_et_soustitre(self):
+        pass
+
+
+if __name__ == "__main__":
+    publication = Publication(
+        titre_publication="Titre",
+        date_str_publication="26/12/2024",
+        lien_publication="lien",
+        id_organisme_publication="dares",
+        soustitre_publication="soustitre",
+        collection_publication="collection",
+    )
+    print(publication.nom_officiel_organisme)

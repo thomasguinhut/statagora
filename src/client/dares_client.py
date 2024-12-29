@@ -110,3 +110,8 @@ class DaresClient:
 
     def get_last_dares(self, date) -> List[dict]:
         pass
+
+
+if __name__ == "__main__":
+    client = DaresClient()
+    print(client.get_all_dares(True))
