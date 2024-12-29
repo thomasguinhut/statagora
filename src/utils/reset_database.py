@@ -17,39 +17,6 @@ class ResetDatabase(metaclass=Singleton):
     """
 
     @log
-    def lancer(self):
-        """
-
-        Crée le schéma et les tables SQL.
-
-        Parameters
-        ----------
-        verif : bool
-            Ne crée le schéma et les tables que si c'est voulu.
-
-        """
-
-        os.environ["POSTGRES_SCHEMA"] = "statagora"
-
-        dotenv.load_dotenv()
-        schema = os.environ["POSTGRES_SCHEMA"]
-        create_schema = (
-            f"DROP SCHEMA IF EXISTS {
-            schema} CASCADE;"
-            f"CREATE SCHEMA {schema};"
-        )
-        with open("data/init_db.sql", encoding="utf-8") as init_db:
-            init_db_as_string = init_db.read()
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(create_schema)
-                    cursor.execute(init_db_as_string)
-        except Exception as e:
-            logging.error(e)
-            raise
-
-    @log
     def remplir(self):
         """
 
@@ -65,5 +32,4 @@ class ResetDatabase(metaclass=Singleton):
 
 
 if __name__ == "__main__":
-    ResetDatabase().lancer()
     ResetDatabase().remplir()

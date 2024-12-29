@@ -1,5 +1,6 @@
 import logging
 import streamlit as st
+from streamlit_gsheets import GSheetsConnection
 
 
 from utils.singleton import Singleton
@@ -11,51 +12,25 @@ from dao.db_connection import DBConnection
 class PublicationDao:
 
     @log
-    def creer(self, publication) -> bool:
-        res = None
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        INSERT INTO publication(titre_publication,
-                                                date_publication, lien_publication,
-                                                organisme_publication, soustitre_publication,
-                                                collection_publication) VALUES
-                        (%(titre_publication)s, %(date_publication)s,
-                        %(lien_publication)s, %(organisme_publication)s,
-                        %(soustitre_publication)s, %(collection_publication)s)
-                            RETURNING titre_publication;
-                        """,
-                        {
-                            "titre_publication": publication.titre,
-                            "date_publication": publication.date,
-                            "lien_publication": publication.lien,
-                            "organisme_publication": publication.organisme,
-                            "soustitre_publication": publication.soustitre,
-                            "collection_publication": publication.collection,
-                        },
-                    )
-                    res = cursor.fetchone()
-        except Exception as e:
-            logging.info(e)
-            raise
-        created = False
-        if res:
-            created = True
-        return created
+    def creer(self, publication):
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        sheet = conn.open("statagora")
+        worksheet = sheet.worksheet("base")
+        worksheet.append_row(
+            [
+                publication.titre,
+                publication.date_obj,
+                publication.lien,
+                publication.organisme,
+                publication.sousitre,
+                publication.organisation,
+            ]
+        )
 
     def tout_afficher(self):
         # Connexion à la base de données PostgreSQL
-        conn = st.connection("postgresql", type="sql")
-        # Requête SQL pour récupérer les publications et les logos
-        query = """
-        SELECT *
-            FROM statagora.publication p
-            LEFT JOIN statagora.organisme o ON p.organisme_publication = o.nom_organisme
-        """
-        # Exécution de la requête sans cache
-        df = conn.query(query)
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df = conn.read()
         return df
 
     def afficher_date_la_plus_récente(self, organisme):
