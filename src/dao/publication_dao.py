@@ -16,3 +16,7 @@ class PublicationDao:
         df = self.afficher_publications()
         df = df[df["id_organisme_publication"] == organisme]
         return df["date_publication"].max() if not df.empty else None
+
+
+if __name__ == "__main__":
+    print(PublicationDao().afficher_publications())
