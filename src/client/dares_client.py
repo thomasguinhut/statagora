@@ -78,30 +78,25 @@ class DaresClient:
                     collection = " ".join(collection_tag.stripped_strings)
 
                 # Configurer la locale pour interpréter la date en français
-                try:
-                    locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
-                except locale.Error:
-                    # Windows fallback
-                    locale.setlocale(locale.LC_TIME, "French_France.1252")
+                locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
 
                 # Convertir et formater la date
-                try:
-                    if date:
-                        date_objet = datetime.strptime(date, "%d %B %Y").date()
-                        date_formatee = date_objet.strftime("%d/%m/%Y")
-                except ValueError:
-                    date_formatee = "Erreur de conversion de la date"
+                if date:
+                    date_objet = datetime.strptime(date, "%d %B %Y").date()
+                    date_formatee = date_objet.strftime("%d/%m/%Y")
 
                 # Filtrer les articles vides
                 if title or date or link or subtitle or collection:
                     article_data.append(
                         {
-                            "titre": title,
-                            "date": date_formatee,
-                            "lien": f"https://dares.travail-emploi.gouv.fr{link}" if link else None,
-                            "organisme": "dares",
-                            "soustitre": subtitle,
-                            "collection": collection,  # Ajout de la collection au dictionnaire
+                            "titre_publication": title,
+                            "date_str_publication": date_formatee,
+                            "lien_publication": (
+                                f"https://dares.travail-emploi.gouv.fr{link}" if link else None
+                            ),
+                            "id_organisme_publication": "dares",
+                            "soustitre_publication": subtitle,
+                            "collection_publication": collection,  # Ajout de la collection au dictionnaire
                         }
                     )
 
@@ -115,9 +110,3 @@ class DaresClient:
 
     def get_last_dares(self, date) -> List[dict]:
         pass
-
-
-if __name__ == "__main__":
-    publications = DaresClient().get_all_dares(test=True)
-    for i in publications:
-        print(i["date"] + " - " + i["collection"])

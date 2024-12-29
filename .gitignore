@@ -1,3 +1,4 @@
 statagora.json
 *.png
 test.py
+.coverage

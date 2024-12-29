@@ -10,12 +10,12 @@ class PublicationService:
     def creer(self, publication: dict[str, str]) -> Publication:
 
         nouvelle_publication = Publication(
-            titre=publication["titre"],
-            date_str=publication["date"],
-            lien=publication["lien"],
-            organisme=publication["organisme"],
-            soustitre=publication["soustitre"],
-            collection=publication["collection"],
+            titre_publication=publication["titre_publication"],
+            date_str_publication=publication["date_str_publication"],
+            lien_publication=publication["lien_publication"],
+            id_organisme_publication=publication["id_organisme_publication"],
+            soustitre_publication=publication["soustitre_publication"],
+            collection_publication=publication["collection_publication"],
         )
 
         if PublicationDao().creer(nouvelle_publication):
@@ -28,12 +28,12 @@ class PublicationService:
         liste = []
         for row in df.itertuples():
             publi = Publication(
-                titre=row.titre_publication,
-                date_str=row.date_publication,
-                lien=row.lien_publication,
-                organisme=row.organisme_publication,
-                soustitre=row.soustitre_publication,
-                collection=row.collection_publication,
+                titre_publication=row.titre_publication,
+                date_str_publication=row.date_publication,
+                lien_publication=row.lien_publication,
+                id_organisme_publication=row.organisme_publication,
+                soustitre_publication=row.soustitre_publication,
+                collection_publication=row.collection_publication,
             )
             liste.append(publi)
         return liste
