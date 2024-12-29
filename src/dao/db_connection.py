@@ -15,7 +15,9 @@ class DBConnection:
         ]
 
         # Lecture des credentials depuis le fichier JSON
-        credentials = ServiceAccountCredentials.from_json_keyfile_name("data/statagora.json", scope)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            "src/data/statagora.json", scope
+        )
 
         # Initialisation de l'objet d'autorisation
         gc = gspread.authorize(credentials)
