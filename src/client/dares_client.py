@@ -108,10 +108,29 @@ class DaresClient:
 
         return article_data
 
+    def get_first_publication_date(self):
+        url = f"https://dares.travail-emploi.gouv.fr/publications?page=0"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
+        articles = soup.find_all("article")
+        for article in articles:
+            title = article.find("h3", class_="list-article-title")
+            if title:
+                date_tag = article.find("ul", class_="list-article-information")
+                if date_tag:
+                    date_span = date_tag.find("li", class_="list-item").find("span")
+                    if date_span:
+                        locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+                        date = date_span.get_text(strip=True).replace("\xa0", " ")
+                        date_objet = datetime.strptime(date, "%d %B %Y").date()
+                        date_formatee = date_objet.strftime("%Y-%m-%d")
+                        return date_formatee
+        return None
+
     def get_last_dares(self, date) -> List[dict]:
         pass
 
 
 if __name__ == "__main__":
     client = DaresClient()
-    print(client.get_all_dares(True))
+    print(client.get_first_publication_date())

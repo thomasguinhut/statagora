@@ -24,10 +24,28 @@ class ResetDatabase:
         df = pd.DataFrame(nouvelles_publications)
         sheet = DBConnection().connection()
         worksheet = sheet.worksheet("publications")
-        worksheet.update(values=[df.columns.values.tolist()] + df.values.tolist(), range_name="A1")
+        worksheet.update("A1", [df.columns.values.tolist()] + df.values.tolist())
         print("Les publications ont bien été ajoutées à la base de données.")
+
+    def nouvelle_publication(self, id_organisme) -> bool:
+        """
+
+        Dit s'il y a de nouvelles publications d'un organisme.
+
+        Args:
+            id_organisme (str)
+
+        Returns:
+            bool
+        """
+
+        date_la_plus_récente_base = PublicationService().afficher_date_la_plus_récente_base(
+            id_organisme
+        )
+        if id_organisme == "dares":
+            date_la_plus_récente_publi = DaresClient().get_first_publication_date()
+        return date_la_plus_récente_publi > date_la_plus_récente_base
 
 
 if __name__ == "__main__":
-    # ResetDatabase().reset_publications(True)
-    ResetDatabase().reset_organismes()
+    ResetDatabase().reset_publications(True)

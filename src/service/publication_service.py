@@ -34,8 +34,8 @@ class PublicationService:
             liste.append(publi)
         return liste
 
-    def afficher_date_la_plus_récente(self, id_organisme):
-        return PublicationDao().afficher_date_la_plus_récente(id_organisme)
+    def afficher_date_la_plus_récente_base(self, id_organisme):
+        return PublicationDao().afficher_date_la_plus_récente_base(id_organisme)
 
 
 if __name__ == "__main__":

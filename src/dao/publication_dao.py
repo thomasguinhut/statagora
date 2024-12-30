@@ -12,11 +12,7 @@ class PublicationDao:
         df = pd.DataFrame(records)
         return df
 
-    def afficher_date_la_plus_récente(self, id_organisme):
+    def afficher_date_la_plus_récente_base(self, id_organisme):
         df = self.afficher_publications()
         df = df[df["id_organisme_publication"] == id_organisme]
         return df["date_publication"].max() if not df.empty else None
-
-
-if __name__ == "__main__":
-    print(PublicationDao().afficher_publications())
