@@ -1,10 +1,10 @@
 import logging
 
-from utils.log_decorator import log
-from client.dares_client import DaresClient
-from service.publication_service import PublicationService
+from src.utils.log_decorator import log
+from src.client.dares_client import DaresClient
+from src.service.publication_service import PublicationService
 import pandas as pd
-from dao.db_connection import DBConnection
+from src.dao.db_connection import DBConnection
 
 
 class ResetDatabase:

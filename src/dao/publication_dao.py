@@ -1,5 +1,5 @@
 import logging
-from dao.db_connection import DBConnection
+from src.dao.db_connection import DBConnection
 import pandas as pd
 
 
