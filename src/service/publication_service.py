@@ -2,7 +2,6 @@ from src.business_objet.publication import Publication
 from src.dao.publication_dao import PublicationDao
 
 from src.utils.log_decorator import log
-from functools import lru_cache
 
 
 class PublicationService:
