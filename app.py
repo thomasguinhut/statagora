@@ -13,6 +13,13 @@ st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
 
 st.title("📊 Statagora")
 
+st.write("")
+text_search = st.text_input("", value="")
+if text_search:
+    filtre = PublicationService().rechercher_publications(text_search, 10)
+else:
+    text_search = None
+
 # Ajouter du CSS personnalisé
 st.markdown(
     """
@@ -37,7 +44,27 @@ previous_month_year = ""
 previous_week = -1
 
 publications = get_publications()
-if publications:
+if text_search is not None:
+    publication_filtrees = []
+    for publication in publications:
+        if publication.titre_publication in filtre:
+            publication_filtrees.append(publication)
+    publication_filtrees.sort(key=lambda pub: filtre.index(pub.titre_publication))
+    for publication in publication_filtrees:
+        date_str = publication.date_publication
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        formatted_date = date_obj.strftime("%d/%m/%Y")
+
+        st.markdown(
+            f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
+            f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date} - <em>{publication.collection_publication}</em></span>",
+            unsafe_allow_html=True,
+        )
+        if publication.soustitre_publication:
+            with st.expander("Afficher le résumé"):
+                st.write(publication.soustitre_publication)
+        st.write("")
+else:
     for publication in publications:
         # Obtenir le mois/année et la semaine de la date de publication
         month_year, week = publication.get_month_year_and_week()

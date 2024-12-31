@@ -7,7 +7,7 @@ from src.utils.log_decorator import log
 class PublicationService:
 
     @log
-    def creer_publications(self, publication):
+    def creer_publications(self, publication: dict):
         nouvelle_publication = Publication(
             titre_publication=publication["titre_publication"],
             date_str_publication=publication["date_str_publication"],
@@ -35,6 +35,9 @@ class PublicationService:
 
     def afficher_date_la_plus_récente_base(self, id_organisme):
         return PublicationDao().afficher_date_la_plus_récente_base(id_organisme)
+
+    def rechercher_publications(self, mots_clés, n):
+        return PublicationDao().rechercher_publications(mots_clés, n)
 
 
 if __name__ == "__main__":

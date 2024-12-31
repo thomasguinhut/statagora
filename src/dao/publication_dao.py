@@ -25,6 +25,23 @@ class PublicationDao:
         df = df[df["id_organisme_publication"] == id_organisme]
         return df["date_publication"].max() if not df.empty else None
 
+    def trouver_publi_by_id(self, titre_publication):
+        df = self.afficher_publications()
+        df = df[df["titre_publication"] == titre_publication]
+        if not df.empty:
+            publication = df.iloc[0]
+            return {
+                "titre_publication": publication["titre_publication"],
+                "date_publication": publication["date_publication"],
+                "lien_publication": publication["lien_publication"],
+                "id_organisme_publication": publication["id_organisme_publication"],
+                "nom_officiel_organisme": publication["nom_officiel_organisme"],
+                "soustitre_publication": publication["soustitre_publication"],
+                "collection_publication": publication["collection_publication"],
+            }
+        else:
+            return None
+
     def rechercher_publications(self, mots_clés, n):
         # Encoder la requête utilisateur
         embedding_requete = self.model.encode([mots_clés])
