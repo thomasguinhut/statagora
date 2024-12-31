@@ -12,33 +12,26 @@ class PublicationDao:
         sheet_info = sheet.worksheet("publications")
         records = sheet_info.get_all_records()
         self.df = pd.DataFrame(records)
-        self.df["texte_complet"] = (
-            self.df["titre_publication"] + " " + self.df["soustitre_publication"]
-        )
-        self.embeddings_publications = self.model.encode(self.df["texte_complet"].tolist())
+        if not self.df.empty:
+            self.df["texte_complet"] = (
+                self.df["titre_publication"]
+                + " "
+                + self.df["soustitre_publication"]
+                + " "
+                + self.df["date_publication"]
+                + " "
+                + self.df["collection_publication"]
+            )
+            self.embeddings_publications = self.model.encode(self.df["texte_complet"].tolist())
 
     def afficher_publications(self):
         return self.df
 
     def afficher_date_la_plus_récente_base(self, id_organisme):
         df = self.afficher_publications()
-        df = df[df["id_organisme_publication"] == id_organisme]
-        return df["date_publication"].max() if not df.empty else None
-
-    def trouver_publi_by_id(self, titre_publication):
-        df = self.afficher_publications()
-        df = df[df["titre_publication"] == titre_publication]
         if not df.empty:
-            publication = df.iloc[0]
-            return {
-                "titre_publication": publication["titre_publication"],
-                "date_publication": publication["date_publication"],
-                "lien_publication": publication["lien_publication"],
-                "id_organisme_publication": publication["id_organisme_publication"],
-                "nom_officiel_organisme": publication["nom_officiel_organisme"],
-                "soustitre_publication": publication["soustitre_publication"],
-                "collection_publication": publication["collection_publication"],
-            }
+            df = df[df["id_organisme_publication"] == id_organisme]
+            return df["date_publication"].max()
         else:
             return None
 
@@ -77,3 +70,12 @@ class PublicationDao:
         ]
 
         return titres_final[:n]
+
+    def base_vide(self) -> bool:
+        """
+        Vérifie si la base de données est vide.
+
+        Returns:
+            bool: True si la base est vide, False sinon.
+        """
+        return self.df.empty

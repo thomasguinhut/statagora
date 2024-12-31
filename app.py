@@ -11,10 +11,16 @@ from datetime import datetime, timedelta
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
 
-st.title("📊 Statagora")
-
+st.markdown(
+    """
+    <h1 style='text-align: center; color: white;'>
+        <a href='https://statagora.streamlit.app/' style='color: white; text-decoration: none;'>📊 Statagora</a>
+    </h1>
+    """,
+    unsafe_allow_html=True,
+)
 st.write("")
-text_search = st.text_input("", value="")
+text_search = st.text_input("Recherche de publications", value="", label_visibility="hidden")
 if text_search:
     filtre = PublicationService().rechercher_publications(text_search, 10)
 else:
