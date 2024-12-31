@@ -38,21 +38,74 @@ class ResetDatabase:
             date_la_plus_récente_publi = DaresClient().get_first_publication_date()
             return date_la_plus_récente_publi > date_la_plus_récente_base
 
-    @log
-    def reset_publications(self, test):
-        publications = DaresClient().get_all_dares(test)
+    def nombre_publications_a_ajouter(self, id_organisme):
+        """
+        Donne le nombre de publications à ajouter.
+
+        Args:
+            id_organisme (str)
+
+        Returns:
+            int
+        """
+        publications = DaresClient().get_all_dares(True)
         nouvelles_publications = []
         base_vide = PublicationService().base_vide()
+        date_la_plus_récente_base = PublicationService().afficher_date_la_plus_récente_base("dares")
+        p = 1
+        n_base = PublicationService().nombre_publications("dares")
+        n_publi = len(publications)
         for publication in publications:
             nouvelle_publication = PublicationService().creer_publications(publication)
             if base_vide:
+                nouvelle_publication.id_publication = "dares_" + str(n_publi - p + 1)
                 nouvelles_publications.append(nouvelle_publication.__dict__)
             else:
-                date_la_plus_récente_base = PublicationService().afficher_date_la_plus_récente_base(
-                    nouvelle_publication.id_organisme_publication
-                )
                 if nouvelle_publication.date_publication >= date_la_plus_récente_base:
+                    nouvelle_publication.id_publication = "dares_" + str(n_base + n_publi - p + 1)
                     nouvelles_publications.append(nouvelle_publication.__dict__)
+            p += 1
+        return len(nouvelles_publications)
+
+    def nombre_publications_anterieures(self, id_organisme):
+        """
+        Donne le nombre de publications dans la base avec une date strictement inférieure à la date la plus récente de la base.
+
+        Args:
+            id_organisme (str)
+
+        Returns:
+            int
+        """
+        date_la_plus_recente_base = PublicationService().afficher_date_la_plus_récente_base(
+            id_organisme
+        )
+        publications = PublicationService().afficher_publications_organisme(id_organisme)
+        count = 0
+        for publication in publications:
+            if publication.date_publication < date_la_plus_recente_base:
+                count += 1
+        return count
+
+    @log
+    def reset_publications_dares(self, test):
+        publications = DaresClient().get_all_dares(test)
+        nouvelles_publications = []
+        base_vide = PublicationService().base_vide()
+        date_la_plus_récente_base = PublicationService().afficher_date_la_plus_récente_base("dares")
+        p = 1
+        n_base = self.nombre_publications_anterieures("dares")
+        n_publi = self.nombre_publications_a_ajouter("dares")
+        for publication in publications:
+            nouvelle_publication = PublicationService().creer_publications(publication)
+            if base_vide:
+                nouvelle_publication.id_publication = "dares_" + str(n_publi - p + 1)
+                nouvelles_publications.append(nouvelle_publication.__dict__)
+            else:
+                if nouvelle_publication.date_publication >= date_la_plus_récente_base:
+                    nouvelle_publication.id_publication = "dares_" + str(n_base + n_publi - p + 1)
+                    nouvelles_publications.append(nouvelle_publication.__dict__)
+            p += 1
         df = pd.DataFrame(nouvelles_publications)
         sheet = DBConnection().connection()
         worksheet = sheet.worksheet("publications")

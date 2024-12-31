@@ -14,6 +14,7 @@ class Publication:
         id_organisme_publication: str,
         soustitre_publication: str,
         collection_publication: str,
+        id_publication: str = None,
     ):
         date_obj = self.format_date(date_str_publication)
         if not isinstance(titre_publication, str):
@@ -26,6 +27,8 @@ class Publication:
             raise TypeError("soustitre_publication doit être un str")
         if not isinstance(collection_publication, str):
             raise TypeError("collection_publication doit être un str")
+        if id_publication is not None and not isinstance(id_publication, str):
+            raise TypeError("id_publication doit être un str")
 
         collection = re.sub(
             r"([Nn]°)\s+(\d+)", r"\1\2", collection_publication
@@ -38,6 +41,7 @@ class Publication:
         self.nom_officiel_organisme = self.nom_officiel(id_organisme_publication)
         self.soustitre_publication = soustitre_publication
         self.collection_publication = collection
+        self.id_publication = id_publication
 
     def format_date(self, date_str_publication: str) -> date:
         """

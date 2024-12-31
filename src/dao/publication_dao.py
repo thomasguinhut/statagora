@@ -35,6 +35,14 @@ class PublicationDao:
         else:
             return None
 
+    def nombre_publications(self, id_organisme):
+        df = self.afficher_publications()
+        if not df.empty:
+            df = df[df["id_organisme_publication"] == id_organisme]
+            return len(df)
+        else:
+            return
+
     def rechercher_publications(self, mots_clés, n):
         # Encoder la requête utilisateur
         embedding_requete = self.model.encode([mots_clés])

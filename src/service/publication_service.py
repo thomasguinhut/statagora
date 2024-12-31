@@ -22,7 +22,6 @@ class PublicationService:
         df = PublicationDao().afficher_publications()
         liste = []
         for row in df.itertuples():
-            print(row)
             if row:
                 publi = Publication(
                     titre_publication=row.titre_publication,
@@ -32,8 +31,25 @@ class PublicationService:
                     soustitre_publication=row.soustitre_publication,
                     collection_publication=row.collection_publication,
                 )
+                print(publi.titre_publication)
                 liste.append(publi)
             liste = None
+        return liste
+
+    def afficher_publications_organisme(self, id_organisme):
+        df = PublicationDao().afficher_publications()
+        liste = []
+        for row in df.itertuples():
+            if row and row.id_organisme_publication == id_organisme:
+                publi = Publication(
+                    titre_publication=row.titre_publication,
+                    date_str_publication=row.date_publication,
+                    lien_publication=row.lien_publication,
+                    id_organisme_publication=row.id_organisme_publication,
+                    soustitre_publication=row.soustitre_publication,
+                    collection_publication=row.collection_publication,
+                )
+                liste.append(publi)
         return liste
 
     def afficher_date_la_plus_récente_base(self, id_organisme):
@@ -44,6 +60,9 @@ class PublicationService:
 
     def base_vide(self):
         return PublicationDao().base_vide()
+
+    def nombre_publications(self, id_organisme):
+        return PublicationDao().nombre_publications(id_organisme)
 
 
 if __name__ == "__main__":
