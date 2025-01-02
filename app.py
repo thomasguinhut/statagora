@@ -18,8 +18,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 @st.cache_data(ttl=3600)  # 86400 secondes = 1 jour
 def get_df(ignore_cache=False):
-    if ignore_cache:
-        get_df.clear()
     return DBConnection().afficher_df()
 
 
@@ -56,10 +54,6 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
 
 df = get_df()
 
-if ResetDatabase().doit_importer():
-    ResetDatabase().reset_publications(df, True)
-    ResetDatabase().enregistrer_date_importation()
-    df = get_df(ignore_cache=True)
 
 publication_service = get_publication_service()
 
@@ -94,13 +88,8 @@ st.markdown(
 )
 
 # Ajouter un bouton pour réinitialiser les publications
-st.markdown("<div class='reset-button'>", unsafe_allow_html=True)
 if st.button("Réinitialiser les publications"):
-    ResetDatabase().reset_publications(df, True)
-    ResetDatabase().enregistrer_date_importation()
-    df = get_df(ignore_cache=True)
     st.success("Les publications ont été réinitialisées.")
-st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<div class='search-bar'>", unsafe_allow_html=True)
 col1, col2 = st.columns([7, 3])

@@ -17,7 +17,7 @@ class Publication:
         collection_publication: str,
         id_publication: str = None,
     ):
-        date_obj = self.format_date(date_str_publication)
+        date_obj = self.formatage_date(date_str_publication)
         if not isinstance(titre_publication, str):
             raise TypeError("titre_publication doit être un str")
         if not isinstance(lien_publication, str):
@@ -46,7 +46,7 @@ class Publication:
         self.collection_publication = collection
         self.id_publication = id_publication
 
-    def format_date(self, date_str_publication: str) -> date:
+    def formatage_date(self, date_str_publication: str) -> date:
         """
 
         Transforme la date de publication en datetime.date
@@ -61,7 +61,6 @@ class Publication:
         Returns:
             date: datetime.date
         """
-
         if not isinstance(date_str_publication, str):
             raise TypeError("date_str_publication doit être un str")
         if re.match(r"^\d{2}/\d{2}/\d{4}$", date_str_publication):
