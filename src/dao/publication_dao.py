@@ -1,17 +1,43 @@
-import logging
-from src.dao.db_connection import DBConnection
-import pandas as pd
+import datetime
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from src.dao.db_connection import DBConnection
 
 
 class PublicationDao:
-    def __init__(self):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        sheet = DBConnection().connection()
-        sheet_info = sheet.worksheet("publications")
-        records = sheet_info.get_all_records()
-        self.df = pd.DataFrame(records)
+
+    def __init__(self, df=None):
+        self.df = df
+
+    def informations_base(self, id_organisme) -> tuple[str, int, bool, int, str]:
+        if not self.df.empty:
+            df_organisme = self.df[self.df["id_organisme_publication"] == id_organisme]
+            date_plus_recente = (
+                df_organisme["date_publication"].max() if not df_organisme.empty else None
+            )
+            nombre_publications = len(df_organisme)
+            base_vide = nombre_publications == 0
+
+            # Calcul du nombre de publications antérieures
+            nombre_publications_anterieures = df_organisme[
+                df_organisme["date_publication"] < date_plus_recente
+            ].shape[0]
+
+        else:
+            date_plus_recente = None
+            nombre_publications_anterieures = 0
+            base_vide = True
+
+        return (
+            date_plus_recente,
+            nombre_publications_anterieures,
+            base_vide,
+        )
+
+    def rechercher_publications(self, mots_clés, n, id_organisme=None) -> list[str]:
+
+        model = SentenceTransformer("all-MiniLM-L6-v2")
+
         if not self.df.empty:
             self.df["texte_complet"] = (
                 self.df["titre_publication"]
@@ -22,52 +48,39 @@ class PublicationDao:
                 + " "
                 + self.df["collection_publication"]
             )
-            self.embeddings_publications = self.model.encode(self.df["texte_complet"].tolist())
+            embeddings_publications = model.encode(self.df["texte_complet"].tolist())
 
-    def afficher_publications(self):
-        return self.df
-
-    def afficher_date_la_plus_récente_base(self, id_organisme):
-        df = self.afficher_publications()
-        if not df.empty:
-            df = df[df["id_organisme_publication"] == id_organisme]
-            return df["date_publication"].max()
+        # Filtrer les publications par id_organisme si fourni
+        if id_organisme:
+            df_filtre = self.df[self.df["id_organisme_publication"] == id_organisme]
         else:
-            return None
+            df_filtre = self.df
 
-    def nombre_publications(self, id_organisme):
-        df = self.afficher_publications()
-        if not df.empty:
-            df = df[df["id_organisme_publication"] == id_organisme]
-            return len(df)
-        else:
-            return
-
-    def rechercher_publications(self, mots_clés, n):
         # Encoder la requête utilisateur
-        embedding_requete = self.model.encode([mots_clés])
+        embedding_requete = model.encode([mots_clés])
 
-        # Calculer la similarité cosinus entre la requête et les documents
-        similarités = cosine_similarity(embedding_requete, self.embeddings_publications)
+        # Calculer la similarité cosinus entre la requête et les documents filtrés
+        similarités = cosine_similarity(embedding_requete, embeddings_publications[df_filtre.index])
 
-        # Ajouter la similarité au DataFrame pour un classement facile
-        self.df["similarité"] = similarités.flatten()
+        # Ajouter la similarité au DataFrame filtré pour un classement facile
+        df_filtre["similarité"] = similarités.flatten()
 
         # Trier les résultats par similarité décroissante
-        df_trie = self.df.sort_values(by="similarité", ascending=False)
+        df_trie = df_filtre.sort_values(by="similarité", ascending=False)
 
         # Extraire les mots clés de 5 lettres ou plus
-        mots_clés_longs = [mot for mot in mots_clés.split() if len(mot) >= 5]
-
-        # Liste pour les titres de publications à ajouter en priorité
-        titres_prioritaires = []
+        mots_clés_longs = set(mot for mot in mots_clés.split() if len(mot) >= 5)
 
         # Vérifier si les mots clés longs sont dans le titre ou le sous-titre
-        for index, row in self.df.iterrows():
-            for mot in mots_clés_longs:
-                if mot in row["titre_publication"] or mot in row["soustitre_publication"]:
-                    titres_prioritaires.append(row["titre_publication"])
-                    break
+        titres_prioritaires = df_filtre[
+            df_filtre.apply(
+                lambda row: any(
+                    mot in row["titre_publication"] or mot in row["soustitre_publication"]
+                    for mot in mots_clés_longs
+                ),
+                axis=1,
+            )
+        ]["titre_publication"].tolist()
 
         # Obtenir les titres des publications triées par similarité
         titres_similaires = df_trie.head(n)["titre_publication"].tolist()
@@ -79,11 +92,16 @@ class PublicationDao:
 
         return titres_final[:n]
 
-    def base_vide(self) -> bool:
+    def supprimer_publications(self, date, id_organisme):
         """
-        Vérifie si la base de données est vide.
-
-        Returns:
-            bool: True si la base est vide, False sinon.
+        Supprime les publications qui ont pour date_publication une date donnée et qui appartiennent à l'id_organisme spécifié.
         """
-        return self.df.empty
+        self.df = self.df[
+            ~(
+                (self.df["date_publication"] == date)
+                & (self.df["id_organisme_publication"] == id_organisme)
+            )
+        ]
+        worksheet = DBConnection().connection()
+        worksheet.clear()
+        worksheet.update("A1", [self.df.columns.values.tolist()] + self.df.values.tolist())

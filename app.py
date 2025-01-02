@@ -1,32 +1,134 @@
 import sys
 import os
-
-# Ajouter le répertoire parent de src au PYTHONPATH
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 import streamlit as st
+from datetime import datetime
 from src.service.publication_service import PublicationService
-from datetime import datetime, timedelta
+from src.business_objet.publication import Publication
+from src.business_objet.organisme import Organisme
+from src.dao.db_connection import DBConnection
+from src.dao.reset_database import ResetDatabase
+import pandas as pd
 
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
 
+# Ajouter le répertoire parent de src au PYTHONPATH
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
+
+@st.cache_data(ttl=3600)  # 86400 secondes = 1 jour
+def get_df(ignore_cache=False):
+    if ignore_cache:
+        get_df.clear()
+    return DBConnection().afficher_df()
+
+
+def get_publication_service():
+    df = get_df()
+    return PublicationService(df)
+
+
+def display_publication(publication):
+    date_str = publication.date_publication
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    formatted_date = date_obj.strftime("%d/%m/%Y")
+
+    st.markdown(
+        f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
+        f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date} - <em>{publication.collection_publication}</em></span>",
+        unsafe_allow_html=True,
+    )
+    if publication.soustitre_publication:
+        with st.expander("Afficher le résumé"):
+            st.write(publication.soustitre_publication)
+    st.write("")
+
+
+def display_mois_semaine(previous_month_year, previous_week, publication):
+    month_year, week = publication.get_month_year_and_week()
+    if month_year != previous_month_year or week != previous_week:
+        st.markdown("<hr style='border: 2px solid white;'>", unsafe_allow_html=True)
+        st.subheader(f"📆 {month_year} - S{week}")
+        st.write("")
+        return month_year, week
+    return previous_month_year, previous_week
+
+
+df = get_df()
+
+if ResetDatabase().doit_importer():
+    ResetDatabase().reset_publications(df, True)
+    ResetDatabase().enregistrer_date_importation()
+    df = get_df(ignore_cache=True)
+
+publication_service = get_publication_service()
+
 st.markdown(
     """
-    <h1 style='text-align: center; color: white;'>
-        <a href='https://statagora.streamlit.app/' style='color: white; text-decoration: none;'>📊 Statagora</a>
+    <style>
+    .title {
+        text-align: left;
+        color: white;
+        font-size: 6em; /* Ajustez cette valeur pour agrandir ou réduire la taille */
+    }
+    .title a {
+        color: white;
+        text-decoration: none;
+    }
+    .reset-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .search-bar {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    </style>
+    <h1 class='title'>
+        <a href='https://statagora.streamlit.app/'>📊 Statagora</a>
     </h1>
     """,
     unsafe_allow_html=True,
 )
-st.write("")
-text_search = st.text_input("Recherche de publications", value="", label_visibility="hidden")
-if text_search:
-    filtre = PublicationService().rechercher_publications(text_search, 10)
-else:
-    text_search = None
 
-# Ajouter du CSS personnalisé
+# Ajouter un bouton pour réinitialiser les publications
+st.markdown("<div class='reset-button'>", unsafe_allow_html=True)
+if st.button("Réinitialiser les publications"):
+    ResetDatabase().reset_publications(df, True)
+    ResetDatabase().enregistrer_date_importation()
+    df = get_df(ignore_cache=True)
+    st.success("Les publications ont été réinitialisées.")
+st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("<div class='search-bar'>", unsafe_allow_html=True)
+col1, col2 = st.columns([7, 3])
+with col1:
+    text_search = st.text_input("Recherche de publications", value="", label_visibility="hidden")
+with col2:
+    organisme = st.selectbox(
+        label="Organisme",
+        options=["Tous organismes", "Dares", "Insee"],
+        index=0,
+        label_visibility="hidden",
+    )
+    if organisme and organisme != "Tous organismes":
+        id_organisme = Organisme(nom_officiel_organisme=organisme).get_id_organisme(organisme)
+    else:
+        id_organisme = None
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Filtrage des publications
+if text_search and organisme and organisme != "Tous organismes":
+    filtre = publication_service.rechercher_publications(text_search, 10, id_organisme)
+elif text_search:
+    filtre = publication_service.rechercher_publications(text_search, 10)
+elif organisme and organisme != "Tous organismes":
+    filtre = publication_service.afficher_publications_organisme(id_organisme)
+else:
+    filtre = None
+
 st.markdown(
     """
     <style>
@@ -38,61 +140,30 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Initialiser les publications
+publications = publication_service.afficher_publications()
 
-# Fonction pour mettre en cache les publications pendant une journée
-@st.cache_data(ttl=86400)  # 86400 secondes = 1 jour
-def get_publications():
-    return PublicationService().afficher_publications()
-
-
-# Initialiser les variables
-previous_month_year = ""
-previous_week = -1
-
-publications = get_publications()
-if text_search is not None:
-    publication_filtrees = []
-    for publication in publications:
-        if publication.titre_publication in filtre:
-            publication_filtrees.append(publication)
-    publication_filtrees.sort(key=lambda pub: filtre.index(pub.titre_publication))
-    for publication in publication_filtrees:
-        date_str = publication.date_publication
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-        formatted_date = date_obj.strftime("%d/%m/%Y")
-
-        st.markdown(
-            f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
-            f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date} - <em>{publication.collection_publication}</em></span>",
-            unsafe_allow_html=True,
-        )
-        if publication.soustitre_publication:
-            with st.expander("Afficher le résumé"):
-                st.write(publication.soustitre_publication)
-        st.write("")
+# Afficher les publications en fonction du filtre
+if filtre is not None:
+    if text_search:
+        publication_filtrees = [pub for pub in publications if pub.titre_publication in filtre]
+        publication_filtrees.sort(key=lambda pub: filtre.index(pub.titre_publication))
+        for publication in publication_filtrees:
+            display_publication(publication)
+    else:
+        publication_filtrees = [pub for pub in publications if pub.titre_publication in filtre]
+        previous_month_year = ""
+        previous_week = -1
+        for publication in publication_filtrees:
+            previous_month_year, previous_week = display_mois_semaine(
+                previous_month_year, previous_week, publication
+            )
+            display_publication(publication)
 else:
+    previous_month_year = ""
+    previous_week = -1
     for publication in publications:
-        # Obtenir le mois/année et la semaine de la date de publication
-        month_year, week = publication.get_month_year_and_week()
-
-        # Afficher le titre si le mois/année ou la semaine a changé
-        if month_year != previous_month_year or week != previous_week:
-            st.markdown("<hr style='border: 2px solid white;'>", unsafe_allow_html=True)
-            st.subheader(f"📆 {month_year} - S{week}")
-            st.write("")
-            previous_month_year = month_year
-            previous_week = week
-
-        date_str = publication.date_publication
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-        formatted_date = date_obj.strftime("%d/%m/%Y")
-
-        st.markdown(
-            f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
-            f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date} - <em>{publication.collection_publication}</em></span>",
-            unsafe_allow_html=True,
+        previous_month_year, previous_week = display_mois_semaine(
+            previous_month_year, previous_week, publication
         )
-        if publication.soustitre_publication:
-            with st.expander("Afficher le résumé"):
-                st.write(publication.soustitre_publication)
-        st.write("")
+        display_publication(publication)

@@ -1,3 +1,2 @@
-fonction pour ajouter uniquement publi qui manquent
 nettoyer titre et sous titre
 les deux points espace insécable à penser

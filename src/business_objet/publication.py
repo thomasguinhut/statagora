@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, date
 from babel.dates import format_date
+from src.business_objet.organisme import Organisme
 import locale
 
 
@@ -38,7 +39,9 @@ class Publication:
         self.date_publication = str(date_obj)
         self.lien_publication = lien_publication
         self.id_organisme_publication = id_organisme_publication
-        self.nom_officiel_organisme = self.nom_officiel(id_organisme_publication)
+        self.nom_officiel_organisme = Organisme(
+            id_organisme=id_organisme_publication
+        ).get_nom_officiel_organisme(id_organisme_publication)
         self.soustitre_publication = soustitre_publication
         self.collection_publication = collection
         self.id_publication = id_publication
@@ -75,14 +78,6 @@ class Publication:
         month_year = format_date(date, "MMMM yyyy", locale="fr")
         week_number = date.isocalendar()[1]
         return month_year.capitalize(), week_number
-
-    def nom_officiel(self, id_organisme: str) -> str:
-        if id_organisme == "dares":
-            return "Dares"
-        elif id_organisme == "insee":
-            return "Insee"
-        elif id_organisme == "ssmsi":
-            return "SSM-SI"
 
     def nettoyer_titre_et_soustitre(self):
         pass

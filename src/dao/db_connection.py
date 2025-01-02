@@ -1,6 +1,7 @@
 import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import pandas as pd
 
 
 class DBConnection:
@@ -36,4 +37,12 @@ class DBConnection:
 
         # Ouverture du fichier Google Sheets
         sheet = gc.open_by_url(st.secrets["connections"]["gsheets"]["spreadsheet"])
-        return sheet
+        sheet_info = sheet.worksheet("publications")
+
+        return sheet_info
+
+    def afficher_df(self) -> pd.DataFrame:
+        sheet_info = self.connection()
+        records = sheet_info.get_all_records()
+        df = pd.DataFrame(records)
+        return df
