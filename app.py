@@ -54,6 +54,12 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
 df = get_df()
 publication_service = get_publication_service(df)
 
+if ResetDatabase().doit_reset():
+    ResetDatabase().reset_publications(df, True)
+    ResetDatabase().enregistrer_date_derniere_ouverture()
+    st.cache_data.clear()
+    st.rerun(scope="app")
+
 st.markdown(
     """
     <style>
@@ -88,6 +94,7 @@ st.markdown(
 if st.button("Réinitialiser les publications"):
     try:
         ResetDatabase().reset_publications(df, True)
+        ResetDatabase().enregistrer_date_derniere_ouverture()
         st.cache_data.clear()
         st.rerun(scope="app")
     except OSError as e:

@@ -84,12 +84,7 @@ class DaresClient:
         if date_tag:
             date_span = date_tag.find("li", class_="list-item").find("span")
             if date_span:
-                date = date_span.get_text(strip=True).replace("\xa0", " ")
-                try:
-                    date_objet = datetime.strptime(date, "%d %B %Y")
-                    date = date_objet.strftime("%d/%m/%Y")
-                except ValueError as e:
-                    print(f"Erreur de conversion de la date: {e}")
+                date = self.convertir_date(date_span.get_text(strip=True))
 
         subtitle_tag = article.find("p", class_="list-article-text")
         if subtitle_tag:
@@ -100,6 +95,27 @@ class DaresClient:
             collection = " ".join(collection_tag.stripped_strings)
 
         return title, date, link, subtitle, collection
+
+    def convertir_date(self, date_str):
+        mois = {
+            "janvier": "01",
+            "février": "02",
+            "mars": "03",
+            "avril": "04",
+            "mai": "05",
+            "juin": "06",
+            "juillet": "07",
+            "août": "08",
+            "septembre": "09",
+            "octobre": "10",
+            "novembre": "11",
+            "décembre": "12",
+        }
+
+        jour, mois_str, annee = date_str.split()
+        mois_num = mois[mois_str]
+        jour = jour.zfill(2)  # Ajoute un zéro devant le jour si nécessaire
+        return f"{jour}/{mois_num}/{annee}"
 
     def date_premiere_publication(self) -> Optional[str]:
         if not self.article_data:
