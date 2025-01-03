@@ -10,10 +10,6 @@ class DaresClient:
 
     def __init__(self) -> None:
         self.article_data: List[dict] = []
-        try:
-            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
-        except locale.Error as e:
-            print(f"Erreur de paramétrage de la locale: {e}")
 
     def publications_dares(self, page_number: int) -> List[BeautifulSoup]:
         url = f"{self.BASE_URL}?page={page_number}"

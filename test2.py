@@ -1,28 +1,11 @@
-from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
 
 
-def convertir_date(date_str):
-    mois = {
-        "janvier": "01",
-        "février": "02",
-        "mars": "03",
-        "avril": "04",
-        "mai": "05",
-        "juin": "06",
-        "juillet": "07",
-        "août": "08",
-        "septembre": "09",
-        "octobre": "10",
-        "novembre": "11",
-        "décembre": "12",
-    }
-
-    jour, mois_str, annee = date_str.split()
-    mois_num = mois[mois_str]
-    jour = jour.zfill(2)  # Ajoute un zéro devant le jour si nécessaire
-    return f"{jour}/{mois_num}/{annee}"
-
-
-date = "2 mai 2024"
-date_convertie = convertir_date(date)
-print(date_convertie)
+url = "https://dares.travail-emploi.gouv.fr/publications?page=0"
+response = requests.get(url)
+response.raise_for_status()
+soup = BeautifulSoup(response.content, "html.parser")
+articles = soup.find_all("article")
+for i in articles:
+    print(f"VOICI : {i}")
