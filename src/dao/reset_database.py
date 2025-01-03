@@ -49,6 +49,7 @@ class ResetDatabase:
         base_vide = informations_base["base_vide"]
         date_la_plus_récente_base = informations_base["date_la_plus_recente"]
         p = 1
+        print(publications)
         for publication in publications:
             nouvelle_publication = publication_service.creer_publications(publication)
             if base_vide:
