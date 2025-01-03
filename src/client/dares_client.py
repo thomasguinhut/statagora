@@ -48,7 +48,9 @@ class DaresClient:
                         {
                             "titre_publication": title,
                             "date_str_publication": date,
-                            "lien_publication": (f"{self.BASE_URL}{link}" if link else None),
+                            "lien_publication": (
+                                f"https://dares.travail-emploi.gouv.fr{link}" if link else None
+                            ),
                             "id_organisme_publication": "dares",
                             "soustitre_publication": subtitle,
                             "collection_publication": collection,
