@@ -16,13 +16,12 @@ st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
-@st.cache_data(ttl=3600)  # 86400 secondes = 1 jour
+@st.cache_data(ttl=3600)
 def get_df(ignore_cache=False):
     return DBConnection().afficher_df()
 
 
-def get_publication_service():
-    df = get_df()
+def get_publication_service(df):
     return PublicationService(df)
 
 
@@ -52,10 +51,15 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
     return previous_month_year, previous_week
 
 
+if ResetDatabase().doit_reset():
+    df = get_df()
+    ResetDatabase().reset_publications(df, True)
+    ResetDatabase().enregistrer_date_importation()
+    st.cache_data.clear()
+    st.rerun()
+
 df = get_df()
-
-
-publication_service = get_publication_service()
+publication_service = get_publication_service(df)
 
 st.markdown(
     """
@@ -89,7 +93,10 @@ st.markdown(
 
 # Ajouter un bouton pour réinitialiser les publications
 if st.button("Réinitialiser les publications"):
-    st.success("Les publications ont été réinitialisées.")
+    ResetDatabase().reset_publications(df, True)
+    ResetDatabase().enregistrer_date_importation()
+    st.cache_data.clear()
+    st.rerun()
 
 st.markdown("<div class='search-bar'>", unsafe_allow_html=True)
 col1, col2 = st.columns([7, 3])

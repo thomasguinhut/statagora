@@ -109,7 +109,7 @@ class ResetDatabase:
     def reset_publications(self, df, test=False):
         self.reset_publications_organisme(df, test, "dares")
 
-    def doit_importer(self):
+    def doit_reset(self):
         """
         Vérifie si l'importation du fichier spécifié doit être effectuée en
         fonction de la date et de l'heure de la dernière importation de ce
