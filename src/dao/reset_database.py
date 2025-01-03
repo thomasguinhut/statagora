@@ -49,7 +49,6 @@ class ResetDatabase:
         base_vide = informations_base["base_vide"]
         date_la_plus_récente_base = informations_base["date_la_plus_recente"]
         p = 1
-        print(publications)
         for publication in publications:
             nouvelle_publication = publication_service.creer_publications(publication)
             if base_vide:
@@ -109,3 +108,28 @@ class ResetDatabase:
 
     def reset_publications(self, df, test=False):
         self.reset_publications_organisme(df, test, "dares")
+
+    def doit_reset(self):
+        """
+        Vérifie si l'importation du fichier spécifié doit être effectuée en
+        fonction de la date et de l'heure de la dernière importation de ce
+        fichier (durée maximale entre deux importations que l'on se fixe :
+        1 heure)
+        """
+        worksheet = DBConnection().connection("dernier_reset")
+        date_cell = worksheet.get("A1")
+        if not date_cell or not date_cell[0]:
+            return True
+        date = date_cell[0][0]
+        date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        date_actuelle = datetime.datetime.now()
+        duree = date_actuelle - date
+        return duree.seconds > 360
+
+    def enregistrer_date_derniere_ouverture(self):
+        """
+        Enregistre la date d'aujourd'hui dans un fichier de contrôle.
+        """
+        worksheet = DBConnection().connection("dernier_reset")
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        worksheet.update("A1", [[date]])

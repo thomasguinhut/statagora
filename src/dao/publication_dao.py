@@ -102,6 +102,6 @@ class PublicationDao:
                 & (self.df["id_organisme_publication"] == id_organisme)
             )
         ]
-        worksheet = DBConnection().connection()
+        worksheet = DBConnection().connection("publications")
         worksheet.clear()
         worksheet.update("A1", [self.df.columns.values.tolist()] + self.df.values.tolist())
