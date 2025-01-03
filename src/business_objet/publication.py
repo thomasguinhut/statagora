@@ -48,7 +48,6 @@ class Publication:
 
     def formatage_date(self, date_str_publication: str) -> date:
         """
-
         Transforme la date de publication en datetime.date
 
         Args:
