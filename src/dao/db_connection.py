@@ -6,7 +6,7 @@ import pandas as pd
 
 class DBConnection:
 
-    def connection(self, sheet_str):
+    def connection(self):
         # Définition des scopes pour l'API Google Sheets
         scope = [
             "https://spreadsheets.google.com/feeds",
@@ -37,7 +37,7 @@ class DBConnection:
 
         # Ouverture du fichier Google Sheets
         sheet = gc.open_by_url(st.secrets["connections"]["gsheets"]["spreadsheet"])
-        sheet_info = sheet.worksheet(sheet_str)
+        sheet_info = sheet.worksheet("publications")
 
         return sheet_info
 
