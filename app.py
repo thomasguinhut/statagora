@@ -86,9 +86,12 @@ st.markdown(
 
 # Ajouter un bouton pour réinitialiser les publications
 if st.button("Réinitialiser les publications"):
-    ResetDatabase().reset_publications(df, True)
-    st.cache_data.clear()
-    st.rerun(scope="app")
+    try:
+        ResetDatabase().reset_publications(df, True)
+        st.cache_data.clear()
+        st.rerun(scope="app")
+    except OSError as e:
+        st.error(f"Erreur d'entrée/sortie lors de la réinitialisation des publications : {e}")
 
 st.markdown("<div class='search-bar'>", unsafe_allow_html=True)
 col1, col2 = st.columns([7, 3])

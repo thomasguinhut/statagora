@@ -98,16 +98,26 @@ class ResetDatabase:
         df = pd.DataFrame(nouvelles_publications)
         worksheet = DBConnection().connection("publications")
 
-        if base_vide:
-            worksheet.update("A1", [df.columns.values.tolist()] + df.values.tolist())
-        else:
-            existing_data = worksheet.get_all_values()
-            new_data = [df.columns.values.tolist()] + df.values.tolist() + existing_data[1:]
-            worksheet.update("A1", new_data)
-        print(f"Les publications '{id_organisme}' ont été réinitialisées.")
+        try:
+            if base_vide:
+                worksheet.update("A1", [df.columns.values.tolist()] + df.values.tolist())
+            else:
+                existing_data = worksheet.get_all_values()
+                new_data = [df.columns.values.tolist()] + df.values.tolist() + existing_data[1:]
+                worksheet.update("A1", new_data)
+            print(f"Les publications '{id_organisme}' ont été réinitialisées.")
+        except OSError as e:
+            print(
+                f"Erreur d'entrée/sortie lors de la mise à jour des publications pour l'organisme {id_organisme} : {e}"
+            )
+            raise
 
     def reset_publications(self, df, test=False):
-        self.reset_publications_organisme(df, test, "dares")
+        try:
+            self.reset_publications_organisme(df, test, "dares")
+        except OSError as e:
+            print(f"Erreur d'entrée/sortie lors de la réinitialisation des publications : {e}")
+            raise
 
     def doit_reset(self):
         """
