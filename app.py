@@ -25,11 +25,6 @@ def get_publication_service(df):
     return PublicationService(df)
 
 
-@st.cache_data(ttl=3600)
-def doit_reset():
-    return ResetDatabase().doit_reset()
-
-
 def display_publication(publication):
     date_str = publication.date_publication
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
@@ -58,14 +53,6 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
 
 df = get_df()
 publication_service = get_publication_service(df)
-
-if doit_reset():
-    ResetDatabase().reset_publications(df, True)
-    ResetDatabase().enregistrer_date_derniere_ouverture()
-    st.cache_data.clear()
-    st.rerun(scope="app")
-
-ResetDatabase().enregistrer_date_derniere_ouverture()
 
 st.markdown(
     """
