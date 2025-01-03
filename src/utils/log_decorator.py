@@ -48,10 +48,11 @@ def log(func):
         )
 
         # pour cacher les mots de passe
-        param_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
-        for i, v in enumerate(param_names):
-            if v in ["password", "passwd", "pwd", "pass", "mot_de_passe", "mdp"]:
-                args_list[i] = "*****"
+        if hasattr(func, "__code__"):
+            param_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
+            for i, v in enumerate(param_names):
+                if v in ["password", "passwd", "pwd", "pass", "mot_de_passe", "mdp"]:
+                    args_list[i] = "*****"
 
         # Transforme en tuple pour avoir un affichage avec des parentheses
         args_list = tuple(args_list)

@@ -10,6 +10,7 @@ from src.utils.log_decorator import log
 
 class Publication:
 
+    @log
     def __init__(
         self,
         titre_publication: str,
@@ -17,7 +18,7 @@ class Publication:
         lien_publication: str,
         id_organisme_publication: str,
         soustitre_publication: str,
-        collection_publication: str,
+        collection_publication: str = None,
         id_publication: str = None,
     ):
         date_obj = self.formatage_date(date_str_publication)
@@ -29,7 +30,7 @@ class Publication:
             raise TypeError("id_organisme_publication doit être un str")
         if not isinstance(soustitre_publication, str):
             raise TypeError("soustitre_publication doit être un str")
-        if not isinstance(collection_publication, str):
+        if collection_publication is not None and not isinstance(collection_publication, str):
             raise TypeError("collection_publication doit être un str")
         if id_publication is not None and not isinstance(id_publication, str):
             raise TypeError("id_publication doit être un str")

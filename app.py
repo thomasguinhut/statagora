@@ -1,5 +1,6 @@
 import sys
 import os
+
 import streamlit as st
 from datetime import datetime
 from src.service.publication_service import PublicationService
@@ -8,6 +9,9 @@ from src.business_objet.organisme import Organisme
 from src.dao.db_connection import DBConnection
 from src.dao.reset_database import ResetDatabase
 import pandas as pd
+import logging
+
+from src.utils.log_decorator import log
 
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
@@ -16,15 +20,18 @@ st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
+@log
 @st.cache_data(ttl=3600)
 def get_df(ignore_cache=False):
     return DBConnection().afficher_df()
 
 
+@log
 def get_publication_service(df):
     return PublicationService(df)
 
 
+@log
 def display_publication(publication):
     date_str = publication.date_publication
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
@@ -41,6 +48,7 @@ def display_publication(publication):
     st.write("")
 
 
+@log
 def display_mois_semaine(previous_month_year, previous_week, publication):
     month_year, week = publication.get_month_year_and_week()
     if month_year != previous_month_year or week != previous_week:
@@ -107,7 +115,7 @@ with col1:
 with col2:
     organisme = st.selectbox(
         label="Organisme",
-        options=["Tous organismes", "Dares", "Insee"],
+        options=["Tous organismes", "Dares", "Insee", "SSM-SI"],
         index=0,
         label_visibility="hidden",
     )

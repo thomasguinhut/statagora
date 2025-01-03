@@ -1,5 +1,6 @@
 import time
 from src.client.dares_client import DaresClient
+from src.client.ssmsi_client import SsmsiClient
 from src.service.publication_service import PublicationService
 import pandas as pd
 from src.dao.db_connection import DBConnection
@@ -30,6 +31,8 @@ class ResetDatabase:
             return DaresClient(), "publications_dares_dict"
         elif id_organisme == "insee":
             return InseeClient(), "publications_insee_dict"
+        elif id_organisme == "ssmsi":
+            return SsmsiClient(), "publications_ssmsi_dict"
         else:
             raise ValueError(f"Organisme inconnu: {id_organisme}")
 
@@ -122,6 +125,7 @@ class ResetDatabase:
     def reset_publications(self, df, test=False):
         try:
             self.reset_publications_organisme(df, test, "dares")
+            self.reset_publications_organisme(df, test, "ssmsi")
         except OSError as e:
             print(f"Erreur d'entrée/sortie lors de la réinitialisation des publications : {e}")
             raise

@@ -7,6 +7,7 @@ from src.utils.log_decorator import log
 
 class PublicationService:
 
+    @log
     def __init__(self, df=None):
         self.df = df
 
