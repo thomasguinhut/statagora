@@ -3,6 +3,9 @@ from datetime import datetime, date
 from babel.dates import format_date
 from src.business_objet.organisme import Organisme
 import locale
+import logging
+
+from src.utils.log_decorator import log
 
 
 class Publication:
@@ -46,6 +49,7 @@ class Publication:
         self.collection_publication = collection
         self.id_publication = id_publication
 
+    @log
     def formatage_date(self, date_str_publication: str) -> date:
         """
         Transforme la date de publication en datetime.date
@@ -71,6 +75,7 @@ class Publication:
                 "date_str_publication doit être au format XX/XX/XXXX ou XXXX-XX-XX de datetime.date"
             )
 
+    @log
     def get_month_year_and_week(self):
         date = datetime.strptime(self.date_publication, "%Y-%m-%d").date()
         month_year = format_date(date, "MMMM yyyy", locale="fr")

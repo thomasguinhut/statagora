@@ -5,6 +5,9 @@ import pandas as pd
 from src.dao.db_connection import DBConnection
 import datetime
 import os
+import logging
+
+from src.utils.log_decorator import log
 
 
 class ResetDatabase:
@@ -12,6 +15,7 @@ class ResetDatabase:
     Initialisation de la vraie base de données.
     """
 
+    @log
     def client_et_methode(self, id_organisme):
         """
         Retourne le client et la méthode appropriés en fonction de l'identifiant de l'organisme.
@@ -29,6 +33,7 @@ class ResetDatabase:
         else:
             raise ValueError(f"Organisme inconnu: {id_organisme}")
 
+    @log
     def nombre_publications_a_ajouter(self, df, test, id_organisme):
         """
         Donne le nombre de publications à ajouter.
@@ -59,6 +64,7 @@ class ResetDatabase:
             p += 1
         return len(nouvelles_publications)
 
+    @log
     def reset_publications_organisme(self, df, test, id_organisme):
         """
         Réinitialise les publications pour un organisme donné.
@@ -112,6 +118,7 @@ class ResetDatabase:
             )
             raise
 
+    @log
     def reset_publications(self, df, test=False):
         try:
             self.reset_publications_organisme(df, test, "dares")
@@ -119,6 +126,7 @@ class ResetDatabase:
             print(f"Erreur d'entrée/sortie lors de la réinitialisation des publications : {e}")
             raise
 
+    @log
     def doit_reset(self):
         """
         Vérifie si l'importation du fichier spécifié doit être effectuée en
@@ -136,6 +144,7 @@ class ResetDatabase:
         duree = date_actuelle - date
         return duree.seconds > 360
 
+    @log
     def enregistrer_date_derniere_ouverture(self):
         """
         Enregistre la date d'aujourd'hui dans un fichier de contrôle.

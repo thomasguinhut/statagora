@@ -2,10 +2,14 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+import logging
+
+from src.utils.log_decorator import log
 
 
 class DBConnection:
 
+    @log
     def connection(self, sheet_str):
         # Définition des scopes pour l'API Google Sheets
         scope = [
@@ -41,6 +45,7 @@ class DBConnection:
 
         return sheet_info
 
+    @log
     def afficher_df(self) -> pd.DataFrame:
         sheet_info = self.connection("publications")
         records = sheet_info.get_all_records()

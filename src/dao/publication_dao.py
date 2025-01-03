@@ -2,6 +2,9 @@ import datetime
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from src.dao.db_connection import DBConnection
+import logging
+
+from src.utils.log_decorator import log
 
 
 class PublicationDao:
@@ -9,6 +12,7 @@ class PublicationDao:
     def __init__(self, df=None):
         self.df = df
 
+    @log
     def informations_base(self, id_organisme) -> tuple[str, int, bool, int, str]:
         if not self.df.empty:
             df_organisme = self.df[self.df["id_organisme_publication"] == id_organisme]
@@ -34,6 +38,7 @@ class PublicationDao:
             base_vide,
         )
 
+    @log
     def rechercher_publications(self, mots_clés, n, id_organisme=None) -> list[str]:
 
         model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -92,6 +97,7 @@ class PublicationDao:
 
         return titres_final[:n]
 
+    @log
     def supprimer_publications(self, date, id_organisme):
         """
         Supprime les publications qui ont pour date_publication une date donnée et qui appartiennent à l'id_organisme spécifié.

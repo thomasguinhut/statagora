@@ -1,5 +1,8 @@
 from src.business_objet.publication import Publication
 from src.dao.publication_dao import PublicationDao
+import logging
+
+from src.utils.log_decorator import log
 
 
 class PublicationService:
@@ -7,6 +10,7 @@ class PublicationService:
     def __init__(self, df=None):
         self.df = df
 
+    @log
     def creer_publications(self, publication: dict) -> Publication:
         nouvelle_publication = Publication(
             titre_publication=publication["titre_publication"],
@@ -18,6 +22,7 @@ class PublicationService:
         )
         return nouvelle_publication
 
+    @log
     def afficher_publications(self) -> list[Publication]:
         liste = []
         for row in self.df.itertuples():
@@ -33,6 +38,7 @@ class PublicationService:
                 liste.append(publi)
         return liste
 
+    @log
     def afficher_publications_organisme(self, id_organisme) -> list[Publication]:
         liste = []
         for row in self.df.itertuples():
@@ -48,6 +54,7 @@ class PublicationService:
                 liste.append(publi.titre_publication)
         return liste
 
+    @log
     def informations_base(self, id_organisme):
         informations = PublicationDao(self.df).informations_base(id_organisme)
         return {
@@ -56,8 +63,10 @@ class PublicationService:
             "base_vide": informations[2],
         }
 
+    @log
     def rechercher_publications(self, mots_clés, n, id_organisme=None) -> list[str]:
         return PublicationDao(self.df).rechercher_publications(mots_clés, n, id_organisme)
 
+    @log
     def supprimer_publications(self, date, id_organisme):
         return PublicationDao(self.df).supprimer_publications(date, id_organisme)
