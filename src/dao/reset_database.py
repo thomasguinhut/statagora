@@ -97,7 +97,7 @@ class ResetDatabase:
             p += 1
 
         df = pd.DataFrame(nouvelles_publications)
-        worksheet = DBConnection().connection()
+        worksheet = DBConnection().connection("publications")
 
         if base_vide:
             worksheet.update("A1", [df.columns.values.tolist()] + df.values.tolist())
@@ -109,46 +109,3 @@ class ResetDatabase:
 
     def reset_publications(self, df, test=False):
         self.reset_publications_organisme(df, test, "dares")
-
-    def doit_reset(self):
-        """
-        Vérifie si l'importation du fichier spécifié doit être effectuée en
-        fonction de la date et de l'heure de la dernière importation de ce
-        fichier (durée maximale entre deux importations que l'on se fixe :
-        1 heure)
-        """
-        fichier_controle = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "derniere_importation_fichier.txt")
-        )
-        if not os.path.exists(fichier_controle):
-            # Si le fichier de contrôle n'existe pas, l'importation est nécessaire
-            return True
-        # Lire la date de la dernière importation depuis le fichier de contrôle
-        with open(fichier_controle, "r") as fichier:
-            derniere_importation = fichier.read()
-        # Convertir la date en objet datetime
-        derniere_importation = datetime.datetime.strptime(derniere_importation, "%Y-%m-%d %H:%M:%S")
-        # Date actuelle
-        date_actuelle = datetime.datetime.now()
-        # Durée maximale entre deux importations : 1 heure
-        duree_maximale = datetime.timedelta(hours=1)
-        # Comparer les dates
-        if date_actuelle - derniere_importation > duree_maximale:
-            return True
-        else:
-            return False
-
-    def enregistrer_date_importation(self):
-        """
-        Enregistre la date d'aujourd'hui dans un fichier de contrôle.
-        """
-        # Chemin du fichier de contrôle qui enregistre la date et l'heure de la
-        # dernière importation
-        fichier_controle = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "derniere_importation_fichier.txt")
-        )
-        # Date et heure actuelles
-        date_actuelle = datetime.datetime.now()
-        # Enregistrer la date et l'heure dans le fichier de contrôle
-        with open(fichier_controle, "w") as fichier:
-            fichier.write(date_actuelle.strftime("%Y-%m-%d %H:%M:%S"))

@@ -51,12 +51,6 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
     return previous_month_year, previous_week
 
 
-if ResetDatabase().doit_reset():
-    df = get_df()
-    ResetDatabase().reset_publications(df, True)
-    ResetDatabase().enregistrer_date_importation()
-    st.cache_data.clear()
-
 df = get_df()
 publication_service = get_publication_service(df)
 
@@ -95,6 +89,7 @@ if st.button("Réinitialiser les publications"):
     ResetDatabase().reset_publications(df, True)
     ResetDatabase().enregistrer_date_importation()
     st.cache_data.clear()
+    st.rerun()
 
 st.markdown("<div class='search-bar'>", unsafe_allow_html=True)
 col1, col2 = st.columns([7, 3])
