@@ -9,7 +9,7 @@ class DaresClient:
     def __init__(self) -> None:
         pass
 
-    def get_all_dares(self, test) -> List[dict]:
+    def publications_dares_dict(self, test) -> List[dict]:
         article_data = []
         page_number = 0
         empty_pages = 0
