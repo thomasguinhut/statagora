@@ -10,6 +10,10 @@ class DaresClient:
 
     def __init__(self) -> None:
         self.article_data: List[dict] = []
+        try:
+            locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+        except locale.Error as e:
+            print(f"Erreur de paramétrage de la locale: {e}")
 
     def publications_dares(self, page_number: int) -> List[BeautifulSoup]:
         url = f"{self.BASE_URL}?page={page_number}"
@@ -82,11 +86,8 @@ class DaresClient:
             if date_span:
                 date = date_span.get_text(strip=True).replace("\xa0", " ")
                 try:
-                    locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
                     date_objet = datetime.strptime(date, "%d %B %Y").date()
                     date = date_objet.strftime("%d/%m/%Y")
-                except locale.Error as e:
-                    print(f"Erreur de paramétrage de la locale: {e}")
                 except ValueError as e:
                     print(f"Erreur de conversion de la date: {e}")
 
