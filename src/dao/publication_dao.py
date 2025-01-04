@@ -48,12 +48,17 @@ class PublicationDao:
         model = SentenceTransformer("all-MiniLM-L6-v2")
 
         if not self.df.empty:
+            self.df["titre_publication"] = self.df["titre_publication"].fillna("")
+            self.df["soustitre_publication"] = self.df["soustitre_publication"].fillna("")
+            self.df["date_publication"] = self.df["date_publication"].fillna("")
+            self.df["collection_publication"] = self.df["collection_publication"].fillna("")
+
             self.df["texte_complet"] = (
                 self.df["titre_publication"]
                 + " "
                 + self.df["soustitre_publication"]
                 + " "
-                + self.df["date_publication"]
+                + self.df["date_publication"].astype(str)
                 + " "
                 + self.df["collection_publication"]
             )
@@ -61,9 +66,9 @@ class PublicationDao:
 
         # Filtrer les publications par id_organisme si fourni
         if id_organisme:
-            df_filtre = self.df[self.df["id_organisme_publication"] == id_organisme]
+            df_filtre = self.df[self.df["id_organisme_publication"] == id_organisme].copy()
         else:
-            df_filtre = self.df
+            df_filtre = self.df.copy()
 
         # Encoder la requête utilisateur
         embedding_requete = model.encode([mots_clés])
@@ -72,7 +77,7 @@ class PublicationDao:
         similarités = cosine_similarity(embedding_requete, embeddings_publications[df_filtre.index])
 
         # Ajouter la similarité au DataFrame filtré pour un classement facile
-        df_filtre["similarité"] = similarités.flatten()
+        df_filtre.loc[:, "similarité"] = similarités.flatten()
 
         # Trier les résultats par similarité décroissante
         df_trie = df_filtre.sort_values(by="similarité", ascending=False)

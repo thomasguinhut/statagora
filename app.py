@@ -37,9 +37,14 @@ def display_publication(publication):
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     formatted_date = date_obj.strftime("%d/%m/%Y")
 
+    if publication.collection_publication:
+        collection_info = f" - <em>{publication.collection_publication}</em>"
+    else:
+        collection_info = ""
+
     st.markdown(
         f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
-        f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date} - <em>{publication.collection_publication}</em></span>",
+        f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date}{collection_info}</span>",
         unsafe_allow_html=True,
     )
     if publication.soustitre_publication:
@@ -60,11 +65,9 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
 
 
 df = get_df()
-print(df)
 publication_service = get_publication_service(df)
 
 if ResetDatabase().doit_reset():
-    print("AH")
     ResetDatabase().reset_publications(True)
     ResetDatabase().enregistrer_date_derniere_ouverture()
     st.cache_data.clear()
