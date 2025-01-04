@@ -10,6 +10,7 @@ from src.dao.db_connection import DBConnection
 from src.dao.reset_database import ResetDatabase
 import pandas as pd
 import logging
+import re
 
 from src.utils.log_decorator import log
 
@@ -42,11 +43,17 @@ def display_publication(publication):
     else:
         collection_info = ""
 
+    # Ajout d'un espace insécable avant les deux-points et les numéros
+    titre_corrige = publication.titre_publication.replace(" :", "&nbsp;:").replace(
+        " - ", "&nbsp;-&nbsp;"
+    )
+
     st.markdown(
-        f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{publication.titre_publication}</a></strong>  \n"
+        f"- <strong class='publication-title'><a href='{publication.lien_publication}' style='color: white;'>{titre_corrige}</a></strong>  \n"
         f"<span style='opacity: 0.7;'>{publication.nom_officiel_organisme} - {formatted_date}{collection_info}</span>",
         unsafe_allow_html=True,
     )
+
     if publication.soustitre_publication:
         with st.expander("Afficher le résumé"):
             st.write(publication.soustitre_publication)

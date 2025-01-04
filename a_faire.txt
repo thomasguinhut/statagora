@@ -1,4 +1,0 @@
-nettoyer titre et sous titre
-les deux points espace insécable à penser
-
-il y a un soucis quand on reset une base deja remplie
