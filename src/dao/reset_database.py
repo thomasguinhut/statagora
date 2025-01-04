@@ -1,6 +1,8 @@
 import time
 from src.client.dares_client import DaresClient
 from src.client.ssmsi_client import SsmsiClient
+from src.client.drees_client import DreesClient
+from src.client.insee_blog_client import InseeBlogClient
 from src.service.publication_service import PublicationService
 import pandas as pd
 from src.dao.db_connection import DBConnection
@@ -31,8 +33,12 @@ class ResetDatabase:
             return DaresClient(), "publications_dares_dict"
         elif id_organisme == "insee":
             return InseeClient(), "publications_insee_dict"
+        elif id_organisme == "insee_blog":
+            return InseeBlogClient(), "publications_insee_blog_dict"
         elif id_organisme == "ssmsi":
             return SsmsiClient(), "publications_ssmsi_dict"
+        elif id_organisme == "drees":
+            return DreesClient(), "publications_drees_dict"
         else:
             raise ValueError(f"Organisme inconnu: {id_organisme}")
 
@@ -104,7 +110,7 @@ class ResetDatabase:
         DBConnection().enregistrer_feuille(df, id_organisme)
 
     @log
-    def reset_publications(self, test=False):
+    def reset_publications(self):
         """
         Réinitialise les publications pour tous les organismes.
 
@@ -112,10 +118,19 @@ class ResetDatabase:
             df (DataFrame): Le DataFrame contenant les publications.
             test (bool): Indicateur de test.
         """
-        organismes = ["dares", "ssmsi"]
+        # Dictionnaire associant chaque organisme à la valeur de 'test'
+        test_values = {"dares": True, "ssmsi": True, "drees": True, "insee_blog": False}
+
+        organismes = ["dares", "ssmsi", "drees", "insee_blog"]
         for organisme in organismes:
+            # Récupération des publications
             df = DBConnection().afficher_feuille(organisme)
-            self.reset_publications_organisme(df, test, organisme)
+
+            # Déterminer la valeur de 'test' à partir du dictionnaire
+            test_value = test_values.get(organisme, True)  # Valeur par défaut est True
+
+            # Appel de la fonction de réinitialisation avec la valeur appropriée de 'test'
+            self.reset_publications_organisme(df, test_value, organisme)
 
     @log
     def doit_reset(self):

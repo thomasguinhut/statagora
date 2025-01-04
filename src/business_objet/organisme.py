@@ -15,8 +15,12 @@ class Organisme:
             return "Dares"
         elif id_organisme == "insee":
             return "Insee"
+        elif id_organisme == "insee_blog":
+            return "Blog de l'Insee"
         elif id_organisme == "ssmsi":
             return "SSM-SI"
+        elif id_organisme == "drees":
+            return "Drees"
 
     @log
     def get_id_organisme(self, nom_officiel: str) -> str:
@@ -24,7 +28,11 @@ class Organisme:
             return "dares"
         elif nom_officiel == "Insee":
             return "insee"
+        elif nom_officiel == "Blog de l'Insee":
+            return "insee_blog"
         elif nom_officiel == "SSM-SI":
             return "ssmsi"
+        elif nom_officiel == "Drees":
+            return "drees"
         else:
             return None

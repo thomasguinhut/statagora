@@ -75,7 +75,7 @@ df = get_df()
 publication_service = get_publication_service(df)
 
 if ResetDatabase().doit_reset():
-    ResetDatabase().reset_publications(True)
+    ResetDatabase().reset_publications()
     ResetDatabase().enregistrer_date_derniere_ouverture()
     st.cache_data.clear()
     st.rerun(scope="app")
@@ -113,7 +113,7 @@ st.markdown(
 # Ajouter un bouton pour réinitialiser les publications
 if st.button("Réinitialiser les publications"):
     try:
-        ResetDatabase().reset_publications(True)
+        ResetDatabase().reset_publications()
         ResetDatabase().enregistrer_date_derniere_ouverture()
         st.cache_data.clear()
         st.rerun(scope="app")
@@ -127,7 +127,7 @@ with col1:
 with col2:
     organisme = st.selectbox(
         label="Organisme",
-        options=["Tous organismes", "Dares", "Insee", "SSM-SI"],
+        options=["Tous organismes", "Dares", "Insee", "SSM-SI", "Drees", "Blog de l'Insee"],
         index=0,
         label_visibility="hidden",
     )

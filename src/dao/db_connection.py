@@ -39,8 +39,10 @@ class DBConnection:
     def afficher_df(self) -> pd.DataFrame:
         df_dares = self.afficher_feuille("dares")
         df_ssmsi = self.afficher_feuille("ssmsi")
+        df_drees = self.afficher_feuille("drees")
+        df_insee_blog = self.afficher_feuille("insee_blog")
 
-        df = pd.concat([df_dares, df_ssmsi], ignore_index=True)
+        df = pd.concat([df_dares, df_ssmsi, df_drees, df_insee_blog], ignore_index=True)
 
         if not df.empty and "date_publication" in df.columns:
             df["date_publication"] = pd.to_datetime(df["date_publication"])

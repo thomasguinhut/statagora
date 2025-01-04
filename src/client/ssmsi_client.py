@@ -114,11 +114,3 @@ class SsmsiClient:
         mois_num = mois[mois_str]
         jour = jour.zfill(2)  # Ajoute un zéro devant le jour si nécessaire
         return f"{jour}/{mois_num}/{annee}"
-
-    @log
-    def date_premiere_publication(self) -> Optional[str]:
-        if not self.article_data:
-            self.publications_ssmsi_dict(test=False)
-        if self.article_data:
-            return self.article_data[0]["date_str_publication"]
-        return None
