@@ -1,6 +1,7 @@
 from src.business_objet.publication import Publication
 from src.dao.publication_dao import PublicationDao
 import logging
+import pandas as pd
 
 from src.utils.log_decorator import log
 
@@ -28,13 +29,19 @@ class PublicationService:
         liste = []
         for row in self.df.itertuples():
             if row:
+                collection_publication = (
+                    row.collection_publication if not pd.isna(row.collection_publication) else ""
+                )
+                soustitre_publication = (
+                    row.soustitre_publication if not pd.isna(row.soustitre_publication) else ""
+                )
                 publi = Publication(
                     titre_publication=row.titre_publication,
-                    date_str_publication=row.date_publication,
+                    date_str_publication=row.date_publication.strftime("%Y-%m-%d"),
                     lien_publication=row.lien_publication,
                     id_organisme_publication=row.id_organisme_publication,
-                    soustitre_publication=row.soustitre_publication,
-                    collection_publication=row.collection_publication,
+                    soustitre_publication=soustitre_publication,
+                    collection_publication=collection_publication,
                 )
                 liste.append(publi)
         return liste
@@ -44,13 +51,19 @@ class PublicationService:
         liste = []
         for row in self.df.itertuples():
             if row and row.id_organisme_publication == id_organisme:
+                collection_publication = (
+                    row.collection_publication if not pd.isna(row.collection_publication) else ""
+                )
+                soustitre_publication = (
+                    row.soustitre_publication if not pd.isna(row.soustitre_publication) else ""
+                )
                 publi = Publication(
                     titre_publication=row.titre_publication,
-                    date_str_publication=row.date_publication,
+                    date_str_publication=row.date_publication.strftime("%Y-%m-%d"),
                     lien_publication=row.lien_publication,
                     id_organisme_publication=row.id_organisme_publication,
-                    soustitre_publication=row.soustitre_publication,
-                    collection_publication=row.collection_publication,
+                    soustitre_publication=soustitre_publication,
+                    collection_publication=collection_publication,
                 )
                 liste.append(publi.titre_publication)
         return liste
