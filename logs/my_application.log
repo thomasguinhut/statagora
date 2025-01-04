@@ -232,3 +232,15 @@
 04/01/2025 13:29:43 - INFO     -     .run_streamlit_app() - DEBUT
 04/01/2025 13:29:43 - INFO     -     .run_streamlit_app() - FIN
 04/01/2025 13:29:43 - INFO     -        └─> Sortie : None
+04/01/2025 18:35:43 - INFO     - --------------------------------------------------
+04/01/2025 18:35:43 - INFO     - Lancement MonApplication                           
+04/01/2025 18:35:43 - INFO     - --------------------------------------------------
+04/01/2025 18:35:43 - INFO     -     .run_streamlit_app() - DEBUT
+04/01/2025 18:35:43 - INFO     -     .run_streamlit_app() - FIN
+04/01/2025 18:35:43 - INFO     -        └─> Sortie : None
+04/01/2025 18:44:44 - INFO     - --------------------------------------------------
+04/01/2025 18:44:44 - INFO     - Lancement MonApplication                           
+04/01/2025 18:44:44 - INFO     - --------------------------------------------------
+04/01/2025 18:44:44 - INFO     -     .run_streamlit_app() - DEBUT
+04/01/2025 18:44:44 - INFO     -     .run_streamlit_app() - FIN
+04/01/2025 18:44:44 - INFO     -        └─> Sortie : None

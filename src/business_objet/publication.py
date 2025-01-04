@@ -7,6 +7,9 @@ import logging
 
 from src.utils.log_decorator import log
 
+# Configurer le logging pour afficher les messages de débogage
+logging.basicConfig(level=logging.DEBUG)
+
 
 class Publication:
 
@@ -21,6 +24,9 @@ class Publication:
         collection_publication: str,
         id_publication: str = None,
     ):
+        logging.debug(
+            f"Initialisation de Publication avec date_str_publication: {date_str_publication} (type: {type(date_str_publication)})"
+        )
         date_obj = self.formatage_date(date_str_publication)
         if not isinstance(titre_publication, str):
             raise TypeError("titre_publication doit être un str")
@@ -65,6 +71,9 @@ class Publication:
         Returns:
             date: datetime.date
         """
+        logging.debug(
+            f"Formatage de la date avec date_str_publication: {date_str_publication} (type: {type(date_str_publication)})"
+        )
         if not isinstance(date_str_publication, str):
             raise TypeError("date_str_publication doit être un str")
         if re.match(r"^\d{2}/\d{2}/\d{4}$", date_str_publication):
@@ -96,4 +105,4 @@ if __name__ == "__main__":
         soustitre_publication="soustitre",
         collection_publication="collection",
     )
-    print(type(publication.date_publication))
+    logging.debug(f"Type de publication.date_publication: {type(publication.date_publication)}")
