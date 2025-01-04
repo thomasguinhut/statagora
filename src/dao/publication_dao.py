@@ -16,6 +16,10 @@ class PublicationDao:
     def informations_base(self, id_organisme) -> tuple[str, int, bool, int, str]:
         if not self.df.empty:
             df_organisme = self.df[self.df["id_organisme_publication"] == id_organisme]
+            # Remplir les valeurs None avec une chaîne de caractères vide pour éviter les comparaisons invalides
+            df_organisme["date_publication"] = df_organisme["date_publication"].fillna("")
+            # S'assurer que toutes les dates sont des chaînes de caractères
+            df_organisme["date_publication"] = df_organisme["date_publication"].astype(str)
             date_plus_recente = (
                 df_organisme["date_publication"].max() if not df_organisme.empty else None
             )
@@ -102,12 +106,11 @@ class PublicationDao:
         """
         Supprime les publications qui ont pour date_publication une date donnée et qui appartiennent à l'id_organisme spécifié.
         """
-        self.df = self.df[
+        df = self.df[
             ~(
                 (self.df["date_publication"] == date)
                 & (self.df["id_organisme_publication"] == id_organisme)
             )
         ]
-        worksheet = DBConnection().connection("publications")
-        worksheet.clear()
-        worksheet.update("A1", [self.df.columns.values.tolist()] + self.df.values.tolist())
+        DBConnection().enregistrer_feuille(df, id_organisme)
+        return df

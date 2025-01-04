@@ -6,6 +6,7 @@ import pandas as pd
 from src.dao.db_connection import DBConnection
 import datetime
 import logging
+import os
 
 from src.utils.log_decorator import log
 
@@ -70,38 +71,40 @@ class ResetDatabase:
         Args:
             test (bool): Indicateur de test.
             id_organisme (str): L'identifiant de l'organisme.
-
-        Returns:
-            list: Liste des nouvelles publications.
         """
+        start_time = time.time()
         client, method = self.client_et_methode(id_organisme)
         publications = getattr(client, method)(test)
         publication_service = PublicationService(df)
         informations_base = publication_service.informations_base(id_organisme)
         date_la_plus_récente_base = informations_base["date_la_plus_recente"]
         base_vide = informations_base["base_vide"]
+        n_publis_a_ajouter = self.nombre_publications_a_ajouter(df, test, id_organisme)
+        n_publis_anterieures = informations_base["nombre_publications_anterieures"]
 
         if not base_vide:
-            publication_service.supprimer_publications(date_la_plus_récente_base, id_organisme)
+            df = publication_service.supprimer_publications(date_la_plus_récente_base, id_organisme)
 
         nouvelles_publications = []
-        n_publis_anterieures = informations_base["nombre_publications_anterieures"]
-        n_publis_a_ajouter = self.nombre_publications_a_ajouter(df, test, id_organisme)
+        p = 1
 
-        for p, publication in enumerate(publications, start=1):
+        for publication in publications:
             nouvelle_publication = publication_service.creer_publications(publication)
             if base_vide:
                 nouvelle_publication.id_publication = f"{id_organisme}_{n_publis_a_ajouter - p + 1}"
-            elif nouvelle_publication.date_publication >= date_la_plus_récente_base:
-                nouvelle_publication.id_publication = (
-                    f"{id_organisme}_{n_publis_anterieures + n_publis_a_ajouter - p + 1}"
-                )
-            nouvelles_publications.append(nouvelle_publication.__dict__)
-
-        return nouvelles_publications
+                nouvelles_publications.append(nouvelle_publication.__dict__)
+            else:
+                if nouvelle_publication.date_publication >= date_la_plus_récente_base:
+                    nouvelle_publication.id_publication = (
+                        f"{id_organisme}_{n_publis_anterieures + n_publis_a_ajouter - p + 1}"
+                    )
+                    nouvelles_publications.append(nouvelle_publication.__dict__)
+            p += 1
+        df = pd.concat([pd.DataFrame(nouvelles_publications), df], ignore_index=True)
+        DBConnection().enregistrer_feuille(df, id_organisme)
 
     @log
-    def reset_publications(self, df, test=False):
+    def reset_publications(self, test=False):
         """
         Réinitialise les publications pour tous les organismes.
 
@@ -109,21 +112,10 @@ class ResetDatabase:
             df (DataFrame): Le DataFrame contenant les publications.
             test (bool): Indicateur de test.
         """
-        try:
-            nouvelles_publications = []
-            for id_organisme in ["dares", "ssmsi"]:
-                nouvelles_publications += self.reset_publications_organisme(df, test, id_organisme)
-
-            if nouvelles_publications:
-                df = pd.DataFrame(nouvelles_publications)
-                worksheet = DBConnection().connection("publications")
-                existing_data = worksheet.get_all_values()
-                new_data = [df.columns.values.tolist()] + df.values.tolist() + existing_data[1:]
-                worksheet.update("A1", new_data)
-                print("Les publications ont été réinitialisées.")
-        except OSError as e:
-            print(f"Erreur d'entrée/sortie lors de la réinitialisation des publications : {e}")
-            raise
+        organismes = ["dares", "ssmsi"]
+        for organisme in organismes:
+            df = DBConnection().afficher_feuille(organisme)
+            self.reset_publications_organisme(df, test, organisme)
 
     @log
     def doit_reset(self):
@@ -133,43 +125,31 @@ class ResetDatabase:
         fichier (durée maximale entre deux importations que l'on se fixe :
         1 heure)
         """
-        worksheet = DBConnection().connection("dernier_reset")
-        date_cell = worksheet.get("A1")
-        if not date_cell or not date_cell[0]:
+        dossier_courant = os.path.abspath(os.path.dirname(__file__))
+        dossier_courant = os.path.dirname(dossier_courant)
+        dossier_courant = os.path.dirname(dossier_courant)
+        dossier_courant = os.path.join(dossier_courant, "data/derniere_importation_fichier.txt")
+
+        if not os.path.exists(dossier_courant):
+            # Si le fichier xlm n'existe pas, l'importation est nécessaire
             return True
-        date = date_cell[0][0]
-        date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-        date_actuelle = datetime.datetime.now()
-        duree = date_actuelle - date
-        return duree.seconds > 3600
+        # Lire la date de la dernière importation depuis le fichier de contrôle
+        with open(dossier_courant, "r") as fichier:
+            date = fichier.read()
+            date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            date_actuelle = datetime.datetime.now()
+            duree = date_actuelle - date
+            return duree.seconds > 3600
 
     @log
     def enregistrer_date_derniere_ouverture(self):
         """
         Enregistre la date d'aujourd'hui dans un fichier de contrôle.
         """
-        worksheet = DBConnection().connection("dernier_reset")
+        dossier_courant = os.path.abspath(os.path.dirname(__file__))
+        dossier_courant = os.path.dirname(dossier_courant)
+        dossier_courant = os.path.dirname(dossier_courant)
+        dossier_courant = os.path.join(dossier_courant, "data/derniere_importation_fichier.txt")
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        worksheet.update("A1", [[date]])
-
-    @log
-    def trier_publications(self, df):
-        """
-        Trie les publications par date de publication.
-
-        Args:
-            df (DataFrame): Le DataFrame contenant les publications.
-        """
-        if not df.empty and "date_publication" in df.columns:
-            df["date_publication"] = pd.to_datetime(df["date_publication"])
-            df = df.sort_values(by="date_publication", ascending=False)
-        else:
-            print("Le DataFrame est vide ou la colonne 'date_publication' n'existe pas.")
-
-        # Convertir les objets Timestamp en chaînes de caractères
-        df = df.astype(str)
-
-        worksheet = DBConnection().connection("publications")
-        worksheet.clear()
-        worksheet.update("A1", [df.columns.values.tolist()] + df.values.tolist())
-        print("Les publications ont été triées par date de publication.")
+        with open(dossier_courant, "w") as fichier:
+            fichier.write(date)
