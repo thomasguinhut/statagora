@@ -60,6 +60,7 @@ def display_mois_semaine(previous_month_year, previous_week, publication):
 
 
 df = get_df()
+print(df)
 publication_service = get_publication_service(df)
 
 if ResetDatabase().doit_reset():
