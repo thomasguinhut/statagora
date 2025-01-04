@@ -88,6 +88,8 @@ class SsmsiClient:
         subtitle_tag = article.find("div", class_="attribute-summary")
         if subtitle_tag:
             subtitle = subtitle_tag.get_text(strip=True).replace("\xa0", " ")
+        else:
+            subtitle = ""
 
         return title, date, link, subtitle
 
