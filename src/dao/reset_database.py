@@ -154,7 +154,7 @@ class ResetDatabase:
             date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
             date_actuelle = datetime.datetime.now()
             duree = date_actuelle - date
-            return duree.seconds > 3600
+            return duree.seconds > 86400
 
     @log
     def enregistrer_date_derniere_ouverture(self):
