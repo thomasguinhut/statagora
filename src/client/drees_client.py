@@ -5,13 +5,13 @@ from datetime import datetime
 
 
 class DreesClient:
-    BASE_URL = "https://drees.solidarites-sante.gouv.fr/recherche?f%5B0%5D=content_type%3A1&f%5B1%5D=content_type%3A2&f%5B2%5D=content_type%3A4&f%5B3%5D=content_type%3A506"
+    BASE_URL = "https://drees.solidarites-sante.gouv.fr/recherche?f%5B0%5D=content_type%3A1&f%5B1%5D=content_type%3A2&f%5B2%5D=content_type%3A4&f%5B3%5D=content_type%3A506%3Fpage%3D20"
 
     def __init__(self) -> None:
         self.article_data: List[dict] = []
 
     def publications_drees(self, page_number: int) -> List[BeautifulSoup]:
-        url = f"{self.BASE_URL}/?page={page_number}"
+        url = f"{self.BASE_URL}&page={page_number}"
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -43,16 +43,21 @@ class DreesClient:
                 title, date, link, subtitle, collection = self.articles_infos(article)
 
                 if title or date or link or subtitle or collection:
-                    self.article_data.append(
-                        {
-                            "titre_publication": title,
-                            "date_str_publication": date,
-                            "lien_publication": link,
-                            "id_organisme_publication": "drees",
-                            "soustitre_publication": subtitle,
-                            "collection_publication": collection,
-                        }
-                    )
+                    # Check if the article with the same link already exists in the list
+                    if not any(
+                        existing_article["lien_publication"] == link
+                        for existing_article in self.article_data
+                    ):
+                        self.article_data.append(
+                            {
+                                "titre_publication": title,
+                                "date_str_publication": date,
+                                "lien_publication": link,
+                                "id_organisme_publication": "drees",
+                                "soustitre_publication": subtitle,
+                                "collection_publication": collection,
+                            }
+                        )
 
             page_number += 1
 

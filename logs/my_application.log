@@ -10,3 +10,9 @@
 05/01/2025 00:09:01 - INFO     -     .run_streamlit_app() - DEBUT
 05/01/2025 00:09:01 - INFO     -     .run_streamlit_app() - FIN
 05/01/2025 00:09:01 - INFO     -        └─> Sortie : None
+05/01/2025 01:03:48 - INFO     - --------------------------------------------------
+05/01/2025 01:03:48 - INFO     - Lancement MonApplication                           
+05/01/2025 01:03:48 - INFO     - --------------------------------------------------
+05/01/2025 01:03:48 - INFO     -     .run_streamlit_app() - DEBUT
+05/01/2025 01:03:48 - INFO     -     .run_streamlit_app() - FIN
+05/01/2025 01:03:48 - INFO     -        └─> Sortie : None
