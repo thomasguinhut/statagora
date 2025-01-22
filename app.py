@@ -2,6 +2,7 @@ import sys
 import os
 
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 from src.service.publication_service import PublicationService
 from src.business_objet.publication import Publication
@@ -13,6 +14,9 @@ import logging
 import re
 
 from src.utils.log_decorator import log
+
+refresh_interval_ms = 30 * 60 * 1000
+st_autorefresh(interval=refresh_interval_ms, key="30min_autorefresh")
 
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
