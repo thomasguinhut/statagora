@@ -15,11 +15,11 @@ import re
 
 from src.utils.log_decorator import log
 
-refresh_interval_ms = 30 * 60 * 1000
-st_autorefresh(interval=refresh_interval_ms, key="30min_autorefresh")
-
 # Configuration du nom et du logo + centrage de la page sur l'écran
 st.set_page_config(page_title="Statagora", page_icon="📊", layout="centered")
+
+refresh_interval_ms = 30 * 60 * 1000
+st_autorefresh(interval=refresh_interval_ms, key="30min_autorefresh")
 
 # Ajouter le répertoire parent de src au PYTHONPATH
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
